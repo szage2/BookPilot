@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Book Pilot</string>
+
+    <!-- Book & details -->
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="isbn">ISBN: 1234567891012</string>
+    <string name="description">Description</string>
+    <!-- Buttons -->
+    <string name="delete_button">Delete</string>
+    <string name="add">Add</string>
+    <string name="try_again">Try again</string>
+    <string name="isbn_ok">OK</string>
+    <!-- Barcode Scanner Information-->
+    <string name="search_result">Search result(s):</string>
+    <string name="barcode_instruction_scan">Scan ISBN number</string>
+    <string name="barcode_instruction_ok">Press ok after right code appears.</string>
 </resources>

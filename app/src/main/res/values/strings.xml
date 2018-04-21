@@ -12,7 +12,18 @@
     <string name="try_again">Try again</string>
     <string name="isbn_ok">OK</string>
     <!-- Barcode Scanner Information-->
-    <string name="search_result">Search result(s):</string>
     <string name="barcode_instruction_scan">Scan ISBN number</string>
     <string name="barcode_instruction_ok">Press ok after right code appears.</string>
+    <!-- Search Information -->
+    <string name="search_hint">Search for book title / author / isbn</string>
+    <string name="search_result">Search result(s):</string>
+    <!-- Labels and items for menu -->
+    <string name="menu_label_books">Book categories</string>
+    <string name="menu_label_search">Search</string>
+    <string name="menu_item_wish_list">Wish list</string>
+    <string name="menu_item_unread">Unread</string>
+    <string name="menu_item_read">Read</string>
+    <string name="menu_item_books">Books</string>
+    <string name="menu_item_isbn">Read ISBN code</string>
+    <string name="menu_item_stores">Stores nearby</string>
 </resources>

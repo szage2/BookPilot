@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/detail_book_cover"
-            android:layout_width="191dp"
-            android:layout_height="172dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="200dp"
             android:layout_marginStart="8dp"
             android:layout_marginRight="200dp"

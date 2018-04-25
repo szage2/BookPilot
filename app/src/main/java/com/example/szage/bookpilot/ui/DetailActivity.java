@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.szage.bookpilot.BookAdapter;
 import com.example.szage.bookpilot.R;
 
 public class DetailActivity extends AppCompatActivity {

@@ -69,12 +69,14 @@ public class UnreadListFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_unread_list, container, false);
 
+        int category = 2;
+
         // Get the Recycler view
         RecyclerView unreadRecyclerView = rootView.findViewById(R.id.unread_recycler_view);
         // Set the Layout Manager on the Recycler View with two spans
         unreadRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         // Call the Book Adapter's constructor
-        BookAdapter bookAdapter = new BookAdapter(getActivity());
+        BookAdapter bookAdapter = new BookAdapter(getActivity(), null, category);
         // Set the adapter on the Recycler View
         unreadRecyclerView.setAdapter(bookAdapter);
 

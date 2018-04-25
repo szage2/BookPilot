@@ -1,5 +1,6 @@
 package com.example.szage.bookpilot.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -7,8 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.szage.bookpilot.BookAdapter;
 import com.example.szage.bookpilot.R;
+import com.example.szage.bookpilot.model.Book;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,8 +41,12 @@ public class DetailFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private boolean mIsSearchDetail;
     private int mCategory;
+    private ArrayList<Book> mBooks;
+    private int mPosition;
+
+    private Button mDeleteButton;
+    private Button mAddButton;
 
     //private OnFragmentInteractionListener mListener;
 
@@ -67,6 +79,22 @@ public class DetailFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        // Get the intent that launched the Activity
+        Intent detailLauncher = getActivity().getIntent();
+        // Get extra data from intent
+        Bundle extra = detailLauncher.getExtras();
+        // Check if it has valid value
+        if (extra != null) {
+            // Get category first
+            mCategory = extra.getInt(BookAdapter.CATEGORY);
+            // If the category is 0 (Search Activity), it has more extra
+            if (mCategory == 0) {
+                // Get the list of books and it's position in the list
+                mBooks = extra.getParcelableArrayList(BookAdapter.BOOK_LIST);
+                mPosition =  extra.getInt(BookAdapter.POSITION);
+            }
+        }
     }
 
     @Override
@@ -75,47 +103,91 @@ public class DetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        Log.i("DetailFragment ", "is started");
+        // Get the views
+        TextView bookTitle = rootView.findViewById(R.id.detail_title);
+        TextView bookAuthor = rootView.findViewById(R.id.detail_author);
+        TextView isbnTextView = rootView.findViewById(R.id.isbn_nr);
+        TextView descriptionTextView = rootView.findViewById(R.id.description);
+        ImageView bookCover = rootView.findViewById(R.id.detail_book_cover);
 
-        // Get the deletion button
-        Button deleteButton= rootView.findViewById(R.id.delete_btn);
-        // Get the addition button
-        Button addButton = rootView.findViewById(R.id.add_btn);
+        String picture = null;
 
-        /*
-        * Launching Detail Activity from different activities
-        * will influence the buttons
-        *
-        * If it started from Search Activity
-        */
-        if (mIsSearchDetail) {
-            // make delete button disappear
-            deleteButton.setVisibility(View.GONE);
-            // set text on the other button (add to wish list)
-            addButton.setText(SEARCH_BTN);
-        } else {
-            // If it started from Book List Activity
-            switch (mCategory) {
-                case 0:
-                    // and from Wish List Fragment
-                    //set text on the other button (mark as unread)
-                    addButton.setText(WISH_LIST_BTN);
-                    break;
-                case 1:
-                    // and from Unread List Fragment
-                    //set text on the other button (mark as read)
-                    addButton.setText(UNREAD_LIST_BTN);
-                    break;
-                case 2:
-                    // and from Read List Fragment
-                    //set text on the other button (rate)
-                    addButton.setText(READ_LIST_BTN);
-                    break;
-                    // set the default text as the same as Wsh List Fragment's
-                default: addButton.setText(WISH_LIST_BTN);
-            }
+        if (mCategory == 0) {
+            // Get the selected book Object
+            Book book = mBooks.get(mPosition);
+            // And get details of that book
+            String title = book.getTitle();
+            String authors = book.getAuthor();
+            // Split authors and separate them with ","
+            String splitAuthors = authors.split(",")[0];
+            // Replace unnecessary characters from authors
+            String cleanAuthors = splitAuthors
+                    .replace("[", " ")
+                    .replace("]", " ")
+                    .replace('"', ' ');
+            String isbnNumber = book.getIsbn();
+            String description = book.getDescription();
+            picture = book.getImageUrl();
+
+            // Set details on views
+            bookTitle.setText(title);
+            bookAuthor.setText(cleanAuthors);
+            isbnTextView.setText(isbnNumber);
+            descriptionTextView.setText(description);
+
+            // Set the Book's title as Activity's title
+            getActivity().setTitle(title);
         }
+        // Load image
+        Glide.with(getActivity()).load(picture).placeholder(R.drawable.place_holder).into(bookCover);
+
+
+        // Get the deletion and addition buttons
+        mDeleteButton = rootView.findViewById(R.id.delete_btn);
+        mAddButton = rootView.findViewById(R.id.add_btn);
+
+        // call method that set visibility and text of buttons
+        handleButtons();
+
         return rootView;
+    }
+
+    /**
+     * Launching Detail Activity from different activities
+     * will influence the buttons
+     */
+    private void handleButtons() {
+        switch (mCategory) {
+
+            // If it started from Search Activity
+            case 0:
+                // make delete button disappear
+                mDeleteButton.setVisibility(View.GONE);
+                // set text on the other button (add to wish list)
+                mAddButton.setText(SEARCH_BTN);
+                break;
+
+            // If it started from Book List Activity
+            case 1:
+                // and from Wish List Fragment
+                //set text on the other button (mark as unread)
+                mAddButton.setText(WISH_LIST_BTN);
+                break;
+            case 2:
+                // and from Unread List Fragment
+                //set text on the other button (mark as read)
+                mAddButton.setText(UNREAD_LIST_BTN);
+                break;
+            case 3:
+                // and from Read List Fragment
+                //set text on the other button (rate)
+                mAddButton.setText(READ_LIST_BTN);
+                break;
+            // set the default text as the same as Wsh List Fragment's
+            default:
+                mAddButton.setText(WISH_LIST_BTN);
+                break;
+        }
     }
 
     /*

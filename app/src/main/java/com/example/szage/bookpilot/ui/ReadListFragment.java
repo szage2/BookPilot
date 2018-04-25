@@ -68,12 +68,14 @@ public class ReadListFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_read_list, container, false);
 
+        int category = 3;
+
         // Get the Recycler view
         RecyclerView readRecyclerView = rootView.findViewById(R.id.read_recycler_view);
         // Set the Layout Manager on the Recycler View with two spans
         readRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         // Call the Book Adapter's constructor
-        BookAdapter bookAdapter = new BookAdapter(getActivity());
+        BookAdapter bookAdapter = new BookAdapter(getActivity(), null, category);
         // Set the adapter on the Recycler View
         readRecyclerView.setAdapter(bookAdapter);
 

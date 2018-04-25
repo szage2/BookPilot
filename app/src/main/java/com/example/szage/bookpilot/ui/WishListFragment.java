@@ -70,12 +70,14 @@ public class WishListFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_wish_list, container, false);
 
+        int category = 1;
+
         // Get the Recycler view
         RecyclerView wishRecyclerView = rootView.findViewById(R.id.wish_recycler_view);
         // Set the Layout Manager on the Recycler View with two spans
         wishRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         // Call the Book Adapter's constructor
-        BookAdapter bookAdapter = new BookAdapter(getActivity());
+        BookAdapter bookAdapter = new BookAdapter(getActivity(), null, category);
         // Set the adapter on the Recycler View
         wishRecyclerView.setAdapter(bookAdapter);
 

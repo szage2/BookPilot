@@ -11,12 +11,14 @@
     <string name="add">Add</string>
     <string name="try_again">Try again</string>
     <string name="isbn_ok">OK</string>
+    <string name="rate">Rate</string>
     <!-- Barcode Scanner Information-->
     <string name="barcode_instruction_scan">Scan ISBN number</string>
-    <string name="barcode_instruction_ok">Press ok after right code appears.</string>
+    <string name="barcode_instruction_ok">Press OK after right code appears.</string>
     <!-- Search Information -->
     <string name="search_hint">Search for book title / author / isbn</string>
     <string name="search_result">Search result(s):</string>
+    <string name="search_empty">Enter valid query</string>
     <!-- Labels and items for menu -->
     <string name="menu_label_books">Book categories</string>
     <string name="menu_label_search">Search</string>
@@ -26,4 +28,48 @@
     <string name="menu_item_books">Books</string>
     <string name="menu_item_isbn">Read ISBN code</string>
     <string name="menu_item_stores">Stores nearby</string>
+
+    <!-- DetailFragment -->
+    <!-- Changing button's text -->
+    <string name="search_list_btn_txt">Add to Wish List</string>
+    <string name="wish_list_btn_txt">Mark as Unread</string>
+    <string name="unread_list_btn_txt">Mark as Read</string>
+    <!-- Text for toasts and logging -->
+    <!-- Updating -->
+    <string name="update_failed">Update failed</string>
+    <string name="book_updated">Book updated</string>
+    <!-- Rating -->
+    <string name="already_rated">You have rated this book</string>
+    <string name="change_rating">Change rating</string>
+    <string name="rating_failed">Rating failed</string>
+    <string name="rating_updated">Rating updated</string>
+    <!-- Addition -->
+    <string name="book_already_added_toast">You already added this book.</string>
+    <string name="book_already_added_log">Book is already in the database</string>
+    <string name="book_added">Book added to Wish List</string>
+    <string name="new_book">It is a new book</string>
+    <string name="addition_failure">Book insertion failed</string>
+    <!-- Deletion -->
+    <string name="deletion_failure_toast">Error in deletion</string>
+    <string name="deletion_failure_log">Book is not deleted</string>
+    <string name="book_deletion_toast">Book is now deleted</string>
+    <string name="book_deletion_log">Book is deleted</string>
+
+    <!-- Text for intent extras -->
+    <string name="rating">rating</string>
+    <string name="book">book</string>
+    <string name="books">books</string>
+    <string name="position">position</string>
+    <string name="id">id</string>
+    <string name="category">category</string>
+
+    <!-- Fragment labels -->
+    <string name="wish_list">Wish list</string>
+    <string name="unread_list">Unread</string>
+    <string name="read_list">Read</string>
+
+    <!-- Loader & connectivity -->
+    <string name="loader_error">Problem with loader</string>
+    <string name="connectivity_error">Problem with connectivity</string>
+
 </resources>

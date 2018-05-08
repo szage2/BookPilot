@@ -4,9 +4,13 @@
     android:layout_height="match_parent"
     tools:context="com.example.szage.bookpilot.ui.ReadListFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/read_recycler_view"
+    <GridView
+        android:id="@+id/read_grid_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="8dp"
+        android:horizontalSpacing="8dp"/>
 
 </FrameLayout>

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,7 +20,6 @@ import com.example.szage.bookpilot.R;
 import com.example.szage.bookpilot.model.Book;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<ArrayList<Book>>{
@@ -55,6 +53,7 @@ public class SearchActivity extends AppCompatActivity
             public void onClick(View view) {
                 // Call method that handel onClick
               searchGetPressed(resultTextView, searchField);
+              searchField.setText(null);
             }
         });
 
@@ -66,7 +65,7 @@ public class SearchActivity extends AppCompatActivity
             LoaderManager loaderManager = getLoaderManager();
             // Initialize loader
             loaderManager.initLoader(BOOK_LOADER_ID, null, this);
-        } else resultTextView.setText("Problem with connectivity");
+        } else resultTextView.setText(R.string.connectivity_error);
     }
 
     /**
@@ -83,7 +82,7 @@ public class SearchActivity extends AppCompatActivity
         // If the Edit had no value
         if (searchQuery.isEmpty()) {
             // Notify the user with a Toast message
-            Toast.makeText(SearchActivity.this, "Enter valid query",
+            Toast.makeText(SearchActivity.this, R.string.search_empty,
                     Toast.LENGTH_SHORT).show();
         } else {
             // when it gets clicked set make it appear.
@@ -97,12 +96,16 @@ public class SearchActivity extends AppCompatActivity
 
             // Make query variable ready for the next search (reset)
             mQueryUrl = "";
-
         }
     }
 
+    /**
+     * Display the result of the search
+     *
+     * @param books is a list of Book Objects
+     */
     private void setUpResultList(ArrayList<Book> books) {
-
+        // Category of the list - 0 means Search result(s)
         int category = 0;
         // Get the Search Recycler View
         RecyclerView searchRecyclerView = findViewById(R.id.search_recycler_view);
@@ -115,6 +118,7 @@ public class SearchActivity extends AppCompatActivity
     }
 
     /**
+     * Creating the loader
      *
      * @param i is the unique id of the loader
      * @param bundle is empty argument
@@ -125,7 +129,6 @@ public class SearchActivity extends AppCompatActivity
         // Create a new loader for the new query
         return new BookSearchResultLoader(this, mQueryUrl);
     }
-
 
     /**
      * Display search result when loading is finished
@@ -142,10 +145,13 @@ public class SearchActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Update the adapter
+     *
+     * @param loader  holds the data
+     */
     @Override
     public void onLoaderReset(Loader<ArrayList<Book>> loader) {
         mBookAdapter.notifyDataSetChanged();
     }
-
-
 }

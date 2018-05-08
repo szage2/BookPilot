@@ -1,66 +1,40 @@
 package com.example.szage.bookpilot.ui;
 
+import android.content.ContentUris;
+import android.content.Intent;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
-import com.example.szage.bookpilot.BookAdapter;
+import com.example.szage.bookpilot.BookCursorAdapter;
 import com.example.szage.bookpilot.R;
+import com.example.szage.bookpilot.data.BookContract;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * interface
- * to handle interaction events.
- * Use the {@link WishListFragment#newInstance} factory method to
- * create an instance of this fragment.
+ *
  */
-public class WishListFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class WishListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final int ID_BOOK_DATABASE_LOADER = 23;
+    private BookCursorAdapter mCursorAdapter;
 
-    //private OnFragmentInteractionListener mListener;
 
     public WishListFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment WishListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static WishListFragment newInstance(String param1, String param2) {
-        WishListFragment fragment = new WishListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -70,56 +44,97 @@ public class WishListFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_wish_list, container, false);
 
-        int category = 1;
+        // Get the GridView
+        GridView wishGridView = rootView.findViewById(R.id.wish_grid_view);
 
-        // Get the Recycler view
-        RecyclerView wishRecyclerView = rootView.findViewById(R.id.wish_recycler_view);
-        // Set the Layout Manager on the Recycler View with two spans
-        wishRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
-        // Call the Book Adapter's constructor
-        BookAdapter bookAdapter = new BookAdapter(getActivity(), null, category);
-        // Set the adapter on the Recycler View
-        wishRecyclerView.setAdapter(bookAdapter);
+        // Create final variable "category"
+        final int category = 1;
+
+        // Get the Cursor Adapter
+        mCursorAdapter = new BookCursorAdapter(getActivity(), null);
+        // Set the adapter on the Grid View
+        wishGridView.setAdapter(mCursorAdapter);
+
+        // Set Item Click Listener on the grid view
+        wishGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // Create an intent
+                Intent detailIntent = new Intent(getActivity(), DetailActivity.class);
+                // Attach the id to the intent as extra data
+                detailIntent.putExtra(String.valueOf(R.string.id), id);
+                // Get the selected book's uri
+                Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, id);
+                // Attach extra data to the intent: category and the book uri
+                detailIntent.putExtra(String.valueOf(R.string.category), category);
+                detailIntent.setData(currentBookUri);
+                // Start detail Activity
+                startActivity(detailIntent);
+            }
+        });
+        // Make the loader work
+        getActivity().getSupportLoaderManager().initLoader(ID_BOOK_DATABASE_LOADER, null, this);
 
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        /*if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }*/
-    }
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    /**
+     * Create the loader
+     *
+     * @param loaderId is the unique id that identifies the loader
+     * @param bundle holds the arguments
+     * @return Cursor Loader
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle bundle) {
+        switch (loaderId) {
+            case ID_BOOK_DATABASE_LOADER:
+                Uri bookQueryUri = BookContract.BookEntry.CONTENT_URI;
+                // Defining projection that contains all columns
+                String[] projection = {
+                        BookContract.BookEntry._ID,
+                        BookContract.BookEntry.COLUMN_TITLE,
+                        BookContract.BookEntry.COLUMN_AUTHORS,
+                        BookContract.BookEntry.COLUMN_BOOK_COVER_PATH,
+                        BookContract.BookEntry.COLUMN_DESCRIPTION,
+                        BookContract.BookEntry.COLUMN_ISBN_NUMBER,
+                        BookContract.BookEntry.COLUMN_CATEGORY_ID,
+                        BookContract.BookEntry.COLUMN_RATING
+                };
+                // Criteria to filter category 1 in the database
+                String selection = BookContract.BookEntry.COLUMN_CATEGORY_ID + "=?";
+                String[] selectionArgs = {"1"};
+                // Loader executing provider's query
+                return new CursorLoader(
+                        getActivity(),
+                        bookQueryUri,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null);
+            default:
+                throw new RuntimeException(String.valueOf(R.string.loader_error + loaderId));
         }
     }
 
+    /**
+     * Set the cursor on the right position
+     *
+     * @param loader is the Cursor Loader
+     * @param cursor holds the data
+     */
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }*/
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mCursorAdapter.swapCursor(cursor);
+    }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
+     * Reset the Cursor
+     *
+     * @param loader is the Cursor Loader
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCursorAdapter.swapCursor(null);
+    }
 }

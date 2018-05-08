@@ -23,6 +23,10 @@
         <activity android:name=".ui.SearchActivity" />
         <activity android:name=".ui.BarcodeActivity" />
         <activity android:name=".ui.StoreFinderActivity" />
+        <provider
+            android:authorities="com.example.szage.bookpilot"
+            android:name=".data.BookProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,100 +1,97 @@
 package com.example.szage.bookpilot.ui;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.szage.bookpilot.BookAdapter;
 import com.example.szage.bookpilot.R;
+import com.example.szage.bookpilot.data.BookContract;
+import com.example.szage.bookpilot.data.BookDbHelper;
 import com.example.szage.bookpilot.model.Book;
 
 import java.util.ArrayList;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * interface
- * to handle interaction events.
- * Use the {@link DetailFragment#newInstance} factory method to
- * create an instance of this fragment.
+ *
  */
-public class DetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String SEARCH_BTN = "Add to Wish List";
-    private static final String WISH_LIST_BTN = "Mark as Unread";
-    private static final String UNREAD_LIST_BTN = "Mark as Read";
-    private static final String READ_LIST_BTN = "Rate";
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final int EXISTING_BOOK_LOADER = 23;
 
-    private int mCategory;
     private ArrayList<Book> mBooks;
-    private int mPosition;
 
-    private Button mDeleteButton;
-    private Button mAddButton;
+    private String mTitle, mAuthors, mBookCover, mDescription, mIsbn;
+    private int mRating, mCategory, mPosition;
+    private Uri mCurrentUri;
+    private Button mAddButton, mDeleteButton, rateButton, bookListButton;
+    private RatingBar ratingBar;
 
-    //private OnFragmentInteractionListener mListener;
+    private TextView bookTitle, bookAuthor, isbnTextView, descriptionTextView, bookRating;
+    private ImageView bookCover;
+
+    private boolean isInDatabase;
+
+    private ArrayList<String> isbnNumbers = new ArrayList<>();
 
     public DetailFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DetailFragment newInstance(String param1, String param2) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         // Get the intent that launched the Activity
         Intent detailLauncher = getActivity().getIntent();
         // Get extra data from intent
         Bundle extra = detailLauncher.getExtras();
         // Check if it has valid value
+
         if (extra != null) {
             // Get category first
-            mCategory = extra.getInt(BookAdapter.CATEGORY);
-            // If the category is 0 (Search Activity), it has more extra
-            if (mCategory == 0) {
-                // Get the list of books and it's position in the list
-                mBooks = extra.getParcelableArrayList(BookAdapter.BOOK_LIST);
-                mPosition =  extra.getInt(BookAdapter.POSITION);
-            }
+            mCategory = extra.getInt(String.valueOf(R.string.category));
+            // Also get the current book uri
+            mCurrentUri = detailLauncher.getData();
+            // Finally extract the rest of the data
+            getExtraData(extra);
         }
+    }
+
+    /**
+     * Extract the data from launcher intent
+     *
+     * @param extra is a bundle containing extra data of launcher intent
+     */
+    private void getExtraData(Bundle extra) {
+        if (mCategory == 0) {
+            // If the category is 0 (Search Activity)
+            // Get the list of books
+            mBooks = extra.getParcelableArrayList(BookAdapter.BOOK_LIST);
+            // Finally get the position of the book
+            mPosition = extra.getInt(String.valueOf(BookAdapter.POSITION));
+            // Otherwise make the loader work
+        } else getActivity().getSupportLoaderManager()
+                .initLoader(EXISTING_BOOK_LOADER, null, this);
     }
 
     @Override
@@ -103,130 +100,433 @@ public class DetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        // Get the views
-        TextView bookTitle = rootView.findViewById(R.id.detail_title);
-        TextView bookAuthor = rootView.findViewById(R.id.detail_author);
-        TextView isbnTextView = rootView.findViewById(R.id.isbn_nr);
-        TextView descriptionTextView = rootView.findViewById(R.id.description);
-        ImageView bookCover = rootView.findViewById(R.id.detail_book_cover);
+        // Get the views, buttons and rating bar
+        bookTitle = rootView.findViewById(R.id.detail_title);
+        bookAuthor = rootView.findViewById(R.id.detail_author);
+        isbnTextView = rootView.findViewById(R.id.isbn_nr);
+        descriptionTextView = rootView.findViewById(R.id.description);
+        bookCover = rootView.findViewById(R.id.detail_book_cover);
+        bookRating = rootView.findViewById(R.id.rating_text);
+        mDeleteButton = rootView.findViewById(R.id.delete_btn);
+        mAddButton = rootView.findViewById(R.id.add_btn);
+        rateButton = rootView.findViewById(R.id.rate_button);
+        ratingBar = rootView.findViewById(R.id.ratingBar);
+        bookListButton = rootView.findViewById(R.id.book_list_button);
 
-        String picture = null;
+        // Setup details and buttons
+        setupBookDetails();
+
+        // Set the Book's title as Activity's title
+        getActivity().setTitle(mTitle);
+
+        // call method that set visibility and text of buttons
+        handleButtonsAndRatingBar();
+
+        return rootView;
+    }
+
+    /**
+     * Extract book details from Book object and prepare book data.
+     */
+    private void setupBookDetails() {
 
         if (mCategory == 0) {
-            // Get the selected book Object
+            // If it's Search Activity's Detail, get the selected book Object
             Book book = mBooks.get(mPosition);
-            // And get details of that book
-            String title = book.getTitle();
-            String authors = book.getAuthor();
+
+            /* And get details of that book */
+
+            String rawAuthors = book.getAuthor();
             // Split authors and separate them with ","
-            String splitAuthors = authors.split(",")[0];
+            String splitAuthors = rawAuthors.split(",")[0];
             // Replace unnecessary characters from authors
-            String cleanAuthors = splitAuthors
+            mAuthors = splitAuthors
                     .replace("[", " ")
                     .replace("]", " ")
                     .replace('"', ' ');
-            String isbnNumber = book.getIsbn();
-            String description = book.getDescription();
-            picture = book.getImageUrl();
-
-            // Set details on views
-            bookTitle.setText(title);
-            bookAuthor.setText(cleanAuthors);
-            isbnTextView.setText(isbnNumber);
-            descriptionTextView.setText(description);
-
-            // Set the Book's title as Activity's title
-            getActivity().setTitle(title);
+            // Get the rest of the book details
+            mTitle = book.getTitle();
+            mIsbn = book.getIsbn();
+            mDescription = book.getDescription();
+            mBookCover = book.getImageUrl();
+            // Display values in views
+            setValuesOnViews();
         }
-        // Load image
-        Glide.with(getActivity()).load(picture).placeholder(R.drawable.place_holder).into(bookCover);
+    }
 
 
-        // Get the deletion and addition buttons
-        mDeleteButton = rootView.findViewById(R.id.delete_btn);
-        mAddButton = rootView.findViewById(R.id.add_btn);
+    /**
+     * Set the values on certain vies and load image
+     */
+    private void setValuesOnViews() {
+        bookTitle.setText(mTitle);
+        bookAuthor.setText(mAuthors);
+        isbnTextView.setText(mIsbn);
+        descriptionTextView.setText(mDescription);
+        Glide.with(getContext()).load(mBookCover).placeholder(R.drawable.place_holder).into(bookCover);
 
-        // call method that set visibility and text of buttons
-        handleButtons();
-
-        return rootView;
+        // If the book category is Read
+        if (mCategory == 3) {
+            // And user already rated the book
+            if (mRating != 0)
+                // Inform the user of existing rating
+                bookRating.setText(R.string.already_rated);
+            // Set that data on rating bar
+            ratingBar.setRating(mRating);
+            // Change text on rating button
+            rateButton.setText(R.string.change_rating);
+        }
     }
 
     /**
      * Launching Detail Activity from different activities
      * will influence the buttons
      */
-    private void handleButtons() {
+    private void handleButtonsAndRatingBar() {
+        // Make all the views disappear regards to rating
+        hideViewsForRating();
+
         switch (mCategory) {
 
             // If it started from Search Activity
             case 0:
                 // make delete button disappear
                 mDeleteButton.setVisibility(View.GONE);
-                // set text on the other button (add to wish list)
-                mAddButton.setText(SEARCH_BTN);
+                // set text on addition button (add to wish list)
+                mAddButton.setText(R.string.search_list_btn_txt);
                 break;
 
             // If it started from Book List Activity
             case 1:
-                // and from Wish List Fragment
-                //set text on the other button (mark as unread)
-                mAddButton.setText(WISH_LIST_BTN);
+                // and from Wish List Fragment,
+                // set text on addition button (mark as unread)
+                mAddButton.setText(R.string.wish_list_btn_txt);
                 break;
             case 2:
-                // and from Unread List Fragment
-                //set text on the other button (mark as read)
-                mAddButton.setText(UNREAD_LIST_BTN);
+                // and from Unread List Fragment,
+                // set text on addition button (mark as read)
+                mAddButton.setText(R.string.unread_list_btn_txt);
                 break;
             case 3:
-                // and from Read List Fragment
-                //set text on the other button (rate)
-                mAddButton.setText(READ_LIST_BTN);
+                // and from Read List Fragment,
+                // cut the description text to make other elements visible
+                descriptionTextView.setMaxLines(3);
+                // make addition button disappear
+                mAddButton.setVisibility(View.GONE);
+                // display necessary views
+                displayViewsForRating();
                 break;
             // set the default text as the same as Wsh List Fragment's
             default:
-                mAddButton.setText(WISH_LIST_BTN);
+                mAddButton.setText(R.string.wish_list_btn_txt);
                 break;
         }
+        setUpClickListeners();
     }
-
-    /*
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }*/
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Display rating bar, rating text view and rate button
      */
-    /*public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
+    private void hideViewsForRating() {
+        bookRating.setVisibility(View.GONE);
+        rateButton.setVisibility(View.GONE);
+        ratingBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * Hide rating bar, rating text view and rate button
+     */
+    private void displayViewsForRating() {
+        bookRating.setVisibility(View.VISIBLE);
+        rateButton.setVisibility(View.VISIBLE);
+        ratingBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Make addition button invisible
+     * and navigation button (book list) visible
+     */
+    private void afterAdditionClicked() {
+        mAddButton.setVisibility(View.GONE);
+        bookListButton.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Set OnClickListeners on buttons
+     */
+    private void setUpClickListeners() {
+
+        // In Read Category
+        if (mCategory == 3) {
+            // Set OnClickListener on the rating button
+            rateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    float rating = ratingBar.getRating();
+                    updateBookRating(rating);
+                }
+            });
+        } else {
+            // In the rest of the categories
+            // Set click listener on the addition button
+            mAddButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Check whether book already added to database
+                    isInDatabase = databaseChecker();
+                    // If it's not added
+                    if (!isInDatabase) {
+                        // Add the book to database
+                        insertBook();
+                        // Setup buttons
+                        afterAdditionClicked();
+                    } else if (mCategory == 1 || mCategory == 2){
+                        // If it's already in database and category is 1 / 2
+                        // change the category
+                        changeCategory(mCategory);
+                    } else {
+                        // Otherwise (already in database and category is 3)
+                        // setup buttons, make notification and log
+                        afterAdditionClicked();
+                        Toast.makeText(getActivity(), R.string.book_already_added_toast,
+                                Toast.LENGTH_SHORT).show();
+                        Log.i(LOG_TAG, String.valueOf(R.string.book_already_added_log));
+                    }
+                }
+            });
+        }
+
+        // Set a click listener on the deletion button
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Delete selected book
+                deleteBook();
+            }
+        });
+
+        // Set a click listener on the book list button
+        bookListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Start Book List Activity to check out newly added books
+                Intent bookListIntent = new Intent(getActivity(), BookListActivity.class);
+                startActivity(bookListIntent);
+            }
+        });
+    }
+
+
+    private boolean databaseChecker() {
+        BookDbHelper dbHelper = new BookDbHelper(getContext());
+
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+
+        Cursor cursor = database.query(BookContract.BookEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        while (cursor.moveToNext()) {
+            int idIndex = cursor.getColumnIndex(BookContract.BookEntry.COLUMN_ISBN_NUMBER);
+            String isbn = cursor.getString(idIndex);
+            isbnNumbers.add(isbn);
+        }
+
+        if (isbnNumbers.contains(mIsbn)) {
+            Log.i(LOG_TAG, String.valueOf(R.string.book_already_added_log));
+            isInDatabase = true;
+
+        } else {
+            Log.i(LOG_TAG, String.valueOf(R.string.new_book));
+            isInDatabase = false;
+        }
+
+        // Close the cursor and the database helper
+        cursor.close();
+        dbHelper.close();
+
+        return isInDatabase;
+    }
+
+    private void updateBookRating(float rating) {
+        ContentValues values = new ContentValues();
+        values.put(BookContract.BookEntry.COLUMN_RATING, rating);
+
+        // Otherwise Update it
+        int rowsAffected = getActivity().getContentResolver()
+                .update(mCurrentUri, values, null, null);
+
+        if (rowsAffected == 0) {
+            // If no rows were affected, then there was an error with the update.
+            Toast.makeText(getActivity(), R.string.rating_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the update was successful and we can display a toast.
+            Toast.makeText(getActivity(), R.string.rating_updated, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void changeCategory(int category) {
+        if (mCurrentUri != null) {
+
+            if (category == 1 || category == 2){
+                // Increase category variable by 1
+                mCategory++;
+            }
+            // Get the content values
+            ContentValues categoryValues = new ContentValues();
+            // attach the new category to it
+            categoryValues.put(BookContract.BookEntry.COLUMN_CATEGORY_ID, mCategory);
+
+            //Update current book's category
+            int rowsAffected = getActivity().getContentResolver()
+                    .update(mCurrentUri, categoryValues, null, null);
+
+            if (rowsAffected == 0) {
+                // If no rows were affected, then there was an error with the update.
+                Toast.makeText(getActivity(), R.string.update_failed, Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the update was successful and we can display a toast.
+                Toast.makeText(getActivity(), R.string.book_updated, Toast.LENGTH_SHORT).show();
+            }
+        }
+        getActivity().finish();
+    }
+
+    /**
+     * Method that inserts a new row (selected book) into  to the database
+     */
+    private void insertBook() {
+
+        if (mCurrentUri == null) {
+            mCategory++;
+        }
+
+        // Get the Content Values
+        ContentValues contentValues = new ContentValues();
+
+        // Put all the book data that needs to be stored into the Content Values
+        contentValues.put(BookContract.BookEntry.COLUMN_TITLE, mTitle);
+        contentValues.put(BookContract.BookEntry.COLUMN_AUTHORS, mAuthors);
+        contentValues.put(BookContract.BookEntry.COLUMN_BOOK_COVER_PATH, mBookCover);
+        contentValues.put(BookContract.BookEntry.COLUMN_ISBN_NUMBER, mIsbn);
+        contentValues.put(BookContract.BookEntry.COLUMN_DESCRIPTION, mDescription);
+        contentValues.put(BookContract.BookEntry.COLUMN_CATEGORY_ID, mCategory);
+        int DEFAULT_RATING = 0;
+        contentValues.put(BookContract.BookEntry.COLUMN_RATING, DEFAULT_RATING);
+
+        // Get the Content Resolver and insert these a new row
+        Uri newUri = getActivity().getContentResolver()
+                .insert(BookContract.BookEntry.CONTENT_URI, contentValues);
+
+        if (newUri == null) {
+            // Notify user that book is not saved
+            Toast.makeText(getActivity(), R.string.addition_failure, Toast.LENGTH_SHORT).show();
+            // Notify user that book is added to the database into the Wish List category
+        } else Toast.makeText(getActivity(), R.string.book_added, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Method that deletes a book from database
+     */
+    private void deleteBook() {
+        if (mCurrentUri != null) {
+            // Get the number of deleted rows
+            int rowsDeleted = getActivity().getContentResolver().delete(mCurrentUri, null, null );
+
+            // Notify the user if the deletion was unsuccessful and log it
+            if (rowsDeleted == 0) {
+                Toast.makeText(getActivity(), R.string.deletion_failure_toast, Toast.LENGTH_SHORT).show();
+                Log.e(LOG_TAG, String.valueOf(R.string.deletion_failure_log));
+            } else {
+                if (isbnNumbers.contains(mIsbn)) {
+                    isbnNumbers.remove(mIsbn);
+                }
+                Toast.makeText(getActivity(), R.string.book_deletion_toast, Toast.LENGTH_SHORT).show();
+                Log.i(LOG_TAG, String.valueOf(R.string.book_deletion_log));
+                Intent bookListIntent = new Intent(getActivity(), BookListActivity.class);
+                startActivity(bookListIntent);
+            }
+        }
+        // Get back to the Book List Activity
+        getActivity().finish();
+    }
+
+    /**
+     * Creating loader to query data
+     *
+     * @param id of the loader
+     * @param args arguments
+     * @return loader
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Defining projection that contains all columns
+        String[] projection = {
+                BookContract.BookEntry._ID,
+                BookContract.BookEntry.COLUMN_TITLE,
+                BookContract.BookEntry.COLUMN_AUTHORS,
+                BookContract.BookEntry.COLUMN_BOOK_COVER_PATH,
+                BookContract.BookEntry.COLUMN_DESCRIPTION,
+                BookContract.BookEntry.COLUMN_ISBN_NUMBER,
+                BookContract.BookEntry.COLUMN_CATEGORY_ID,
+                BookContract.BookEntry.COLUMN_RATING
+        };
+
+        // Loader executing provider's query
+        return new CursorLoader(getActivity(),
+                mCurrentUri,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    /**
+     * Loads queried data
+     *
+     * @param loader executing query of provider
+     * @param data holds all details of the book
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // If there cursor does not hold any valid value
+        if (data == null || data.getCount() < 1) {
+            // Return early
+            return;
+        }
+
+        int titleIndex, authorsIndex, bookCoverIndex, isbnIndex, descriptionIndex, categoryIndex, ratingIndex;
+        // Move to the first row of the cursor, it should be the only one
+        if (data.moveToFirst()) {
+
+            // Read data from this row
+            titleIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_TITLE);
+            authorsIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_AUTHORS);
+            bookCoverIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_BOOK_COVER_PATH);
+            isbnIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_ISBN_NUMBER);
+            descriptionIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_DESCRIPTION);
+            categoryIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_CATEGORY_ID);
+            ratingIndex = data.getColumnIndex(BookContract.BookEntry.COLUMN_RATING);
+
+            // Extract the value from the cursor
+            mTitle = data.getString(titleIndex);
+            mAuthors = data.getString(authorsIndex);
+            mBookCover = data.getString(bookCoverIndex);
+            mIsbn = data.getString(isbnIndex);
+            mDescription = data.getString(descriptionIndex);
+            mRating = data.getInt(ratingIndex);
+            mCategory = data.getInt(categoryIndex);
+
+            setValuesOnViews();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

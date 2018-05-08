@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.szage.bookpilot.BookAdapter;
 import com.example.szage.bookpilot.R;
 import com.example.szage.bookpilot.data.BookContract;
 import com.example.szage.bookpilot.data.BookDbHelper;
@@ -86,9 +85,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (mCategory == 0) {
             // If the category is 0 (Search Activity)
             // Get the list of books
-            mBooks = extra.getParcelableArrayList(BookAdapter.BOOK_LIST);
+            mBooks = extra.getParcelableArrayList(String.valueOf(R.string.books));
             // Finally get the position of the book
-            mPosition = extra.getInt(String.valueOf(BookAdapter.POSITION));
+            mPosition = extra.getInt(String.valueOf(R.string.position));
             // Otherwise make the loader work
         } else getActivity().getSupportLoaderManager()
                 .initLoader(EXISTING_BOOK_LOADER, null, this);

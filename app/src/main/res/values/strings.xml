@@ -6,6 +6,7 @@
     <string name="author">Author</string>
     <string name="isbn">ISBN: 1234567891012</string>
     <string name="description">Description</string>
+    <string name="book_title">Book Title </string>
     <!-- Buttons -->
     <string name="delete_button">Delete</string>
     <string name="add">Add</string>

@@ -1,12 +1,14 @@
 package com.example.szage.bookpilot.ui;
 
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,6 +46,20 @@ public class SearchActivity extends AppCompatActivity
         ImageView searchImage = findViewById(R.id.search_btn);
         // Get the Text View that informs about the results
         final TextView resultTextView = findViewById(R.id.search_result);
+
+        // Get the intent that launched the activity
+        Intent launcherIntent = getIntent();
+        String barcode;
+        // Get extra data from it
+        Bundle extra = launcherIntent.getExtras();
+        // If activity got extra data
+        if (extra != null) {
+            // Get the barcode
+            barcode = extra.getString(String.valueOf(R.string.barcode));
+            Log.i("SearchActivity", "barcode is " + barcode);
+            // Set the barcode on the edit text as query
+            searchField.setText(barcode);
+        }
 
         // make invisible this Text View as default
         resultTextView.setVisibility(View.GONE);

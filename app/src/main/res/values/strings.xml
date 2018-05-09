@@ -16,6 +16,13 @@
     <!-- Barcode Scanner Information-->
     <string name="barcode_instruction_scan">Scan ISBN number</string>
     <string name="barcode_instruction_ok">Press OK after right code appears.</string>
+    <string name="barcode_decoder_error">Could not set up the detector!</string>
+    <string name="barcode_processor">Processor released</string>
+    <string name="camera_source_starts">Camera source is working</string>
+    <string name="camera_source_destroyed">Camera source is working</string>
+    <string name="permission_granted">Camera permission granted</string>
+    <string name="permission_denied">Camera Permission denied</string>
+    Camera source is destroyed
     <!-- Search Information -->
     <string name="search_hint">Search for book title / author / isbn</string>
     <string name="search_result">Search result(s):</string>
@@ -63,6 +70,8 @@
     <string name="position">position</string>
     <string name="id">id</string>
     <string name="category">category</string>
+    <string name="barcode">barcode</string>
+
 
     <!-- Fragment labels -->
     <string name="wish_list">Wish list</string>

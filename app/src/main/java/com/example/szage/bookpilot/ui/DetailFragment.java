@@ -133,7 +133,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // If it's Search Activity's Detail, get the selected book Object
             Book book = mBooks.get(mPosition);
 
-            /* And get details of that book */
+            /* And get details of that book*/
 
             String rawAuthors = book.getAuthor();
             // Split authors and separate them with ","

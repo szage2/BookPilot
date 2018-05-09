@@ -1,5 +1,6 @@
 package com.example.szage.bookpilot;
 
+import android.*;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -8,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.szage.bookpilot.model.Book;
+import com.example.szage.bookpilot.model.Store;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Responsible for Http Url connection and Json response extraction.
@@ -45,6 +48,17 @@ public class QueryUtils {
     private static final String IDENTIFIER = "identifier";
     private static final String ISBN_13 = "ISBN_13";
     private static final String NO_ISBN = "ISBN nr is not available";
+
+    private static final String STORE_ID = "id";
+    private static final String NAME = "name";
+    private static final String PLACE_ID = "place_id";
+    private static final String VICINITY = "vicinity";
+    private static final String REFERENCE = "reference";
+    private static final String GEOMETRY = "geometry";
+    private static final String LOCATION = "location";
+    private static final String LATITUDE = "lat";
+    private static final String LONGITUDE = "lng";
+    private static final String ICON = "icon";
 
 
     public QueryUtils() {
@@ -262,5 +276,123 @@ public class QueryUtils {
         // Get details on the currently active default data network
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo;
+    }
+
+    /**
+     * Creates the URL for places query
+     *
+     * @param longitude is the longitude of device location
+     * @param latitude is the latitude of device location
+     * @return
+     */
+    public static String getURL(double longitude, double latitude) {
+
+        String radius = String.valueOf(5000);
+
+        // TODO: Place your own API key here
+        String myApiKey = "";
+
+        // Build the google places url
+        StringBuilder googlePlacesUrl =
+                new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=").append(latitude).append(",").append(longitude);
+        googlePlacesUrl.append("&radius=").append(radius);
+        googlePlacesUrl.append("&types=").append("book_store");
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + myApiKey);
+
+        Log.i(LOG_TAG, "url is " + googlePlacesUrl.toString());
+
+        return googlePlacesUrl.toString();
+    }
+
+    /**
+     * Fetches nearby stores
+     *
+     * @param requestUrl is the query url
+     * @return stores is a list of Store objects
+     */
+    public static List<Store> fetchStoreLocations(String requestUrl) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Create URL object
+        URL url = createUrl(requestUrl);
+
+        // Perform HTTP request to the URL and receive a JSON response back
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+        }
+
+        // Return the list of Stores after extracted relevant fields
+        return parseLocationData(jsonResponse);
+    }
+
+    /**
+     * Extract data from the Json response
+     *
+     * @param response is the Json response
+     * @return stores is a list of Store objects
+     */
+    private static List<Store> parseLocationData(String response) {
+
+        String id, place_id, placeName = null, reference, icon, vicinity = null;
+        double latitude, longitude;
+
+        if (TextUtils.isEmpty(response)) {
+            return null;
+        }
+
+        // Create an empty ArrayList that we can start adding stores to
+        List<Store> stores = new ArrayList<>();
+
+        try {
+            // Create a JSONObject from the JSON response string
+            JSONObject baseJsonResponse = new JSONObject(response);
+            // Extract the JSONArray represents a list of stores/ places
+            JSONArray jsonArray = baseJsonResponse.getJSONArray("results");
+
+            if (baseJsonResponse.getString("status").equalsIgnoreCase("OK")) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject place = jsonArray.getJSONObject(i);
+
+                    id = place.getString(STORE_ID);
+                    place_id = place.getString(PLACE_ID);
+
+                    if (!place.isNull(NAME)) {
+                        placeName = place.getString(NAME);
+                    }
+                    if (!place.isNull(VICINITY)) {
+                        vicinity = place.getString(VICINITY);
+                    }
+                    latitude = place.getJSONObject(GEOMETRY).getJSONObject(LOCATION)
+
+                            .getDouble(LATITUDE);
+
+                    longitude = place.getJSONObject(GEOMETRY).getJSONObject(LOCATION)
+                            .getDouble(LONGITUDE);
+
+                    reference = place.getString(REFERENCE);
+                    icon = place.getString(ICON);
+
+                    // Create a new {@link Store} object
+                    Store store = new Store(latitude, longitude, placeName, vicinity);
+                    // add it to the list
+                    stores.add(store);
+                }
+            } else if (baseJsonResponse.getString("status").equalsIgnoreCase("ZERO_RESULTS")) {
+                Log.i(LOG_TAG, "No bookstore found in 5KM radius!!!");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i(LOG_TAG, "stores after parsing is " + stores);
+        return stores;
     }
 }

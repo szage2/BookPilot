@@ -81,5 +81,6 @@
     <!-- Loader & connectivity -->
     <string name="loader_error">Problem with loader</string>
     <string name="connectivity_error">Problem with connectivity</string>
+    <string name="current_uri">book uri</string>
 
 </resources>

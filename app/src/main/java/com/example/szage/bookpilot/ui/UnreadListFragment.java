@@ -1,6 +1,7 @@
 package com.example.szage.bookpilot.ui;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,9 +27,28 @@ public class UnreadListFragment extends Fragment implements LoaderManager.Loader
 
     private static final int ID_BOOK_DATABASE_LOADER = 24;
     private BookCursorAdapter mCursorAdapter;
+    private boolean isTwoPanes;
+    private long firstItemsId;
 
     public UnreadListFragment() {
         // Required empty public constructor
+    }
+
+    // Define a new interface that triggers a callback in the host activity
+    public OnNewItemSelectedListener2 mListener;
+
+    /**
+     * Interface that listens for item clicks in the list view,
+     * passes the position, uri and itemId of first book in the list to activity.
+     */
+    public interface OnNewItemSelectedListener2 {
+        void OnNewItemClicked(int position, Uri bookUri, long itemId);
+    }
+
+    public static UnreadListFragment newInstance(OnNewItemSelectedListener2 listener2) {
+        UnreadListFragment unreadListFragment = new UnreadListFragment();
+        unreadListFragment.mListener = listener2;
+        return unreadListFragment;
     }
 
     @Override
@@ -57,22 +77,39 @@ public class UnreadListFragment extends Fragment implements LoaderManager.Loader
         // Set Item Click Listener on the grid view
         unreadGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
-                // Create an intent
-                Intent detailIntent = new Intent(getActivity(), DetailActivity.class);
-                // Attach the id to the intent as extra data
-                detailIntent.putExtra(String.valueOf(R.string.id), id);
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // Detect the type of device: phone or tablet
+                isTwoPanes = getResources().getBoolean(R.bool.has_two_panes);
+
                 // Get the selected book's uri
                 Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, id);
-                // Attach extra data to the intent: category and the book uri
-                detailIntent.putExtra(String.valueOf(R.string.category), category);
-                detailIntent.setData(currentBookUri);
-                // Start detail Activity
-                startActivity(detailIntent);
+
+                // In case the first item is being selected, get the id of the second item
+                // If the first item will be replaced of the category, that will be the first one.
+                if (id == firstItemsId) {
+                    firstItemsId = mCursorAdapter.getItemId(1);
+                }
+
+                if (!isTwoPanes) {
+                    // if user run the app on a phone
+                    // Create an intent
+                    Intent detailIntent = new Intent(getActivity(), DetailActivity.class);
+                    // Attach the id to the intent as extra data
+                    detailIntent.putExtra(String.valueOf(R.string.id), id);
+                    // Attach extra data to the intent: category and the book uri
+                    detailIntent.putExtra(String.valueOf(R.string.category), category);
+                    detailIntent.setData(currentBookUri);
+                    // Start detail Activity
+                    startActivity(detailIntent);
+                } else {
+                    // In In tablet layout
+                    // Pass selected item's position to the listener
+                    mListener.OnNewItemClicked(position, currentBookUri, firstItemsId);
+                }
             }
         });
         // Make the loader work
-        getActivity().getSupportLoaderManager().initLoader(ID_BOOK_DATABASE_LOADER, null, this);
+        getLoaderManager().initLoader(ID_BOOK_DATABASE_LOADER, null, this);
 
         return rootView;
     }
@@ -117,14 +154,21 @@ public class UnreadListFragment extends Fragment implements LoaderManager.Loader
     }
 
     /**
-     * Set the cursor on the right position
+     * Update variables according to cursor position
      *
      * @param loader is the Cursor Loader
      * @param cursor holds the data
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Set the cursor on the right position
         mCursorAdapter.swapCursor(cursor);
+        // Get the item id of first row in the database
+        firstItemsId = mCursorAdapter.getItemId(0);
+        // Create the uri for that book, using item's id
+        Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, firstItemsId);
+        // Call method that make sure to load appropriate book in Detail Activity
+        mListener.OnNewItemClicked(0, currentBookUri, firstItemsId);
     }
 
     /**
@@ -135,5 +179,22 @@ public class UnreadListFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
+    }
+
+    /**
+     *  Attach WishListFragment to context
+     *
+     * @param context is the activity context
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            // Parse the context
+            mListener = (OnNewItemSelectedListener2) context;
+        } catch (ClassCastException e) {
+            // Catch the exception if parsing didn't work
+            throw new ClassCastException(context.toString());
+        }
     }
 }

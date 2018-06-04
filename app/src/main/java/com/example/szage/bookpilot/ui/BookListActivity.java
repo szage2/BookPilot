@@ -1,6 +1,8 @@
 package com.example.szage.bookpilot.ui;
 
+import android.content.ContentUris;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,15 +11,26 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.szage.bookpilot.R;
+import com.example.szage.bookpilot.data.BookContract;
 
-public class BookListActivity extends AppCompatActivity {
+public class BookListActivity extends AppCompatActivity implements WishListFragment.OnNewItemSelectedListener,
+        DetailFragment.OnItemRemovedFromCategoryListener, UnreadListFragment.OnNewItemSelectedListener2,
+        ReadListFragment.OnNewItemSelectedListener3 {
 
     NavigationView mNavigationView;
     private DrawerLayout mDrawer;
     private boolean mIsTwoPanes;
+    private static int mPosition;
+    private static int mCategory;
+    private static String mStringBookUri;
+    private DetailFragment mDetailFragment;
+    private long firstItemsId;
+    private boolean isItemRemoved;
+    private Bundle detailBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +70,18 @@ public class BookListActivity extends AppCompatActivity {
      */
     private void setUpLayoutForTwoPanes() {
         // If it's a tablet, instantiate Detail Fragment
-        DetailFragment detailFragment = new DetailFragment();
+        mDetailFragment = new DetailFragment();
         // Get the Fragment Manager
         FragmentManager fragmentManager = getSupportFragmentManager();
         // Start fragment transaction and launch Detail Fragment
-        fragmentManager.beginTransaction().replace(R.id.detail_fragment, detailFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.detail_fragment, mDetailFragment).commit();
         // Keep the drawer menu open, even if an item is being selected
         mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, mNavigationView);
         // Make drawer's background transparent, fragments will be visible
         mDrawer.setScrimColor(0x00000000);
+        if (mIsTwoPanes) {
+            sendDataToDetailFragment();
+        }
     }
 
     /**
@@ -208,5 +224,96 @@ public class BookListActivity extends AppCompatActivity {
     private void launchSelectedActivity(Class<?> activity) {
         Intent activityIntent = new Intent(BookListActivity.this, activity);
         startActivity(activityIntent);
+    }
+
+    /**
+     * Method that passes arguments to Detail Fragment
+     * once a book is being selected
+     */
+    private void sendDataToDetailFragment() {
+        // Create detail bundle
+        detailBundle = new Bundle();
+        // put category and position of selected item in the bundle
+        detailBundle.putInt(String.valueOf(R.string.category), mCategory);
+        detailBundle.putInt(String.valueOf(R.string.position), mPosition);
+        detailBundle.putLong("itemId", firstItemsId);
+        // if uri is null
+        if (mStringBookUri == null) {
+            // Create a default uri with id of 0
+            mStringBookUri = String.valueOf(ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, 0));
+        }
+        // add this uri to the bundle
+        detailBundle.putString(String.valueOf(R.string.current_uri), mStringBookUri);
+        // If the item removed from the list
+        if (isItemRemoved) {
+            // Change the uri using the first item's id
+            mStringBookUri = String.valueOf(ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, firstItemsId));
+        }
+        // Set the arguments on the fragment
+        mDetailFragment.setArguments(detailBundle);
+
+        // set isItemRemoved to false
+        isItemRemoved = false;
+    }
+
+    /**
+     * Returns selected item's position, uti and first item's id in list,
+     * that makes it possible to update Detail Fragment
+     *
+     * @param position is the position of the selected item in the wish list
+     */
+    @Override
+    public void OnNewItemClicked(int position, Uri uri, long itemsId) {
+        mStringBookUri = String.valueOf(uri);
+        // Pass these variables to Detail Fragment
+        // If it's tablet mode and book's uri is not null
+        if (mIsTwoPanes && mStringBookUri != null) {
+            // Get the position
+            mPosition = position;
+            // Make category 1
+            mCategory = 1;
+            // Get the first item's id in the list
+            firstItemsId = itemsId;
+            // Method call
+            makeDetailFragmentUpdate();
+        }
+    }
+
+    /**
+     * In tablet mode updates detail fragment
+     * once an item is being removed from current list
+     *
+     * @param category is current book category
+     */
+    @Override
+    public void OnItemRemovedFromList(int category) {
+        // If it's tablet mode
+        if (mIsTwoPanes) {
+            // Get the category
+            mCategory = category;
+            // Set isItemRemoved to true as item has been deleted or it's category's changed
+            isItemRemoved = true;
+            // Method call
+            makeDetailFragmentUpdate();
+        }
+    }
+
+    /**
+     *  Updates Detail fragment by passing a bundle
+     */
+    private void makeDetailFragmentUpdate() {
+        // call method
+        sendDataToDetailFragment();
+        // Create bundle
+        detailBundle = new Bundle();
+        // add the uri to this bundle
+        detailBundle.putString(String.valueOf(R.string.current_uri), mStringBookUri);
+        // If detail fragments is already created
+        if ( mDetailFragment == null) {
+            // Find it by it's id
+            mDetailFragment = (DetailFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
+            // And call method that updates it
+        } mDetailFragment.updateDetailFragment(detailBundle);
     }
 }

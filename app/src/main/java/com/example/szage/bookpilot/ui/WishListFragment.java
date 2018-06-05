@@ -3,6 +3,7 @@ package com.example.szage.bookpilot.ui;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,8 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
     private BookCursorAdapter mCursorAdapter;
     private long firstItemsId;
     private boolean isTwoPanes;
+    private FloatingActionButton shareFab;
+    private String books = "";
 
     public WishListFragment() {
         // Required empty public constructor
@@ -66,6 +70,18 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         // Get the GridView
         GridView wishGridView = rootView.findViewById(R.id.wish_grid_view);
 
+        // Get the share button
+        shareFab = rootView.findViewById(R.id.fab);
+
+        // Detect the type of device: phone or tablet
+        isTwoPanes = getResources().getBoolean(R.bool.has_two_panes);
+
+        // In tablet mode
+        if (isTwoPanes) {
+            // Hide share button
+            shareFab.setVisibility(View.GONE);
+        }
+
         // Create final variable "category"
         final int category = 1;
 
@@ -78,8 +94,6 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         wishGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // Detect the type of device: phone or tablet
-                isTwoPanes = getResources().getBoolean(R.bool.has_two_panes);
 
                 // Get the selected book's uri
                 Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, id);
@@ -169,6 +183,38 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         Uri currentBookUri = ContentUris.withAppendedId(BookContract.BookEntry.CONTENT_URI, firstItemsId);
         // Call method that make sure to load appropriate book in Detail Activity
         mListener.OnNewItemClicked(0, currentBookUri, firstItemsId);
+
+        // If the cursor holds any value
+        if (mCursorAdapter.getCount() != 0) {
+            // Loop through cursor data
+            for (int i = 0; i < mCursorAdapter.getCount(); i++) {
+
+                // Get the column Indexes
+                int titleColumnIndex = cursor.getColumnIndexOrThrow(BookContract.BookEntry.COLUMN_TITLE);
+                int authorsColumnIndex = cursor.getColumnIndexOrThrow(BookContract.BookEntry.COLUMN_AUTHORS);
+                // Get Book details from the cursor
+                String title = cursor.getString(titleColumnIndex);
+                String authors = cursor.getString(authorsColumnIndex);
+
+                // Create a String of authors and title of book
+                // and a line break
+                String book = authors + ": " + title + "\n";
+                // Add the book string to books string
+                books = books + book;
+                Log.i("WishListFragment", "books is " + books);
+                // Move the cursor to next book
+                cursor.moveToNext();
+            }
+        }
+
+        // Set click listener on share button
+        shareFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Call share method
+                shareWishList(books);
+            }
+        });
     }
 
     /**
@@ -196,5 +242,24 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
             // Catch the exception if parsing didn't work
             throw new ClassCastException(context.toString());
         }
+    }
+
+    /**
+     * Enables to share Wish List
+     *
+     * @param shareBody
+     */
+    private void shareWishList(String shareBody) {
+        // Create an intent
+        Intent shareIntent = new Intent();
+        // set send action on it
+        shareIntent.setAction(Intent.ACTION_SEND);
+        // Set the type
+        shareIntent.setType("text/plain");
+        // put subject and body as extra data
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My desired books");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        // Start the activity
+        getActivity().startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.wish_list)));
     }
 }

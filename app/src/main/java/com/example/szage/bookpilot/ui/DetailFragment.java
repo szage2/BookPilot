@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -51,6 +52,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ImageView bookCover;
 
     private boolean isInDatabase, isTwoPanes;
+
+    private FloatingActionButton shareFab;
 
     private static DetailFragment detailFragment;
 
@@ -120,6 +123,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Get the activity's title
         activityTitle = String.valueOf(getActivity().getTitle());
 
+        // Get share button
+        shareFab = rootView.findViewById(R.id.fab_detail);
+        // Set share button't visibility to invisible as default
+        shareFab.setVisibility(View.GONE);
+
         // Get the views, buttons and rating bar
         bookTitle = rootView.findViewById(R.id.detail_title);
         bookAuthor = rootView.findViewById(R.id.detail_author);
@@ -141,6 +149,26 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         // call method that set visibility and text of buttons
         handleButtonsAndRatingBar();
+
+        // Set click listener on share button
+        shareFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create the string that will be shared of book
+                String sharedText = mAuthors + ": " + mTitle;
+                // If there's rating to the book
+                if (mRating != 0) {
+                    // Get the rating and convert it to string
+                    String rateValue = String.valueOf((ratingBar.getRating()));
+                    // Add rating value to shareable string
+                    sharedText = sharedText + ". "+ "Rated: " + rateValue +"/5";
+                }
+                // Log the shareable text
+                Log.i(LOG_TAG, "share value is " + sharedText);
+                // Call method that shares book
+                shareReadBook(sharedText);
+            }
+        });
 
         return rootView;
     }
@@ -251,6 +279,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         // If the book category is Read
         if (mCategory == 3) {
+            // If app runs on phone
+            if (!isTwoPanes) {
+                // Make share button visible
+                shareFab.setVisibility(View.VISIBLE);
+            }
             // And user already rated the book
             if (mRating != 0) {
                 // Inform the user of existing rating
@@ -725,5 +758,24 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             rateButton.setVisibility(View.VISIBLE);
             bookRating.setVisibility(View.VISIBLE);
         } else mAddButton.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Share read book data
+     *
+     * @param text is String variable containing book's author, title and rating
+     */
+    private void shareReadBook(String text) {
+        // Create an intent
+        Intent shareDetails = new Intent();
+        // set send action on it
+        shareDetails.setAction(Intent.ACTION_SEND);
+        // Set the type
+        shareDetails.setType("text/plain");
+        // put subject and body as extra data
+        shareDetails.putExtra(android.content.Intent.EXTRA_SUBJECT, "I read this book");
+        shareDetails.putExtra(Intent.EXTRA_TEXT, text);
+        // Start the activity
+        getActivity().startActivity(Intent.createChooser(shareDetails, getResources().getText(R.string.read_list)));
     }
 }

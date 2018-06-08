@@ -21,6 +21,12 @@ import android.widget.GridView;
 import com.example.szage.bookpilot.BookCursorAdapter;
 import com.example.szage.bookpilot.R;
 import com.example.szage.bookpilot.data.BookContract;
+import com.example.szage.bookpilot.model.Book;
+import com.example.szage.bookpilot.widget.BookWidgetProvider;
+
+import java.util.ArrayList;
+
+import static com.example.szage.bookpilot.widget.BookWidgetProvider.ACTION_UPDATE;
 
 /**
  *
@@ -33,6 +39,7 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
     private boolean isTwoPanes;
     private FloatingActionButton shareFab;
     private String books = "";
+    private ArrayList<Book> bookArrayList;
 
     public WishListFragment() {
         // Required empty public constructor
@@ -184,6 +191,9 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         // Call method that make sure to load appropriate book in Detail Activity
         mListener.OnNewItemClicked(0, currentBookUri, firstItemsId);
 
+        // Create an array list for books
+        bookArrayList = new ArrayList<>();
+
         // If the cursor holds any value
         if (mCursorAdapter.getCount() != 0) {
             // Loop through cursor data
@@ -196,6 +206,11 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
                 String title = cursor.getString(titleColumnIndex);
                 String authors = cursor.getString(authorsColumnIndex);
 
+                // Create book object, only adding title, authors and the rest is null
+                Book bookObject = new Book(title, authors, null, null, null);
+                // Add the object to array list
+                bookArrayList.add(bookObject);
+
                 // Create a String of authors and title of book
                 // and a line break
                 String book = authors + ": " + title + "\n";
@@ -204,7 +219,9 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
                 Log.i("WishListFragment", "books is " + books);
                 // Move the cursor to next book
                 cursor.moveToNext();
-            }
+
+                // Call method that updates widget
+            } updateWidgetWithBookList();
         }
 
         // Set click listener on share button
@@ -261,5 +278,19 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
         // Start the activity
         getActivity().startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.wish_list)));
+    }
+
+    /**
+     * Updates collection widget
+     */
+    public void updateWidgetWithBookList() {
+        // Create an intent
+        Intent widgetIntent = new Intent(getActivity(), BookWidgetProvider.class);
+        // Set update as action
+        widgetIntent.setAction(ACTION_UPDATE);
+        // add array list as extra data
+        widgetIntent.putExtra("bookList", bookArrayList);
+        // Broadcast it to the widget
+        getActivity().sendBroadcast(widgetIntent);
     }
 }

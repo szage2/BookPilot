@@ -83,4 +83,7 @@
     <string name="connectivity_error">Problem with connectivity</string>
     <string name="current_uri">book uri</string>
 
+    <!-- Widget -->
+    <string name="empty_view">No book added yet</string>
+
 </resources>

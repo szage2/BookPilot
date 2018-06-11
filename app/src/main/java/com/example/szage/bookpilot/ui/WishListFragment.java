@@ -208,8 +208,10 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 // Create book object, only adding title, authors and the rest is null
                 Book bookObject = new Book(title, authors, null, null, null);
-                // Add the object to array list
-                bookArrayList.add(bookObject);
+                if (!bookArrayList.contains(bookObject)) {
+                    // Add the object to array list
+                    bookArrayList.add(bookObject);
+                }
 
                 // Create a String of authors and title of book
                 // and a line break
@@ -284,6 +286,7 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
      * Updates collection widget
      */
     public void updateWidgetWithBookList() {
+        Log.i("WhishListFragment", "updateWidgetWithBookList");
         // Create an intent
         Intent widgetIntent = new Intent(getActivity(), BookWidgetProvider.class);
         // Set update as action

@@ -52,6 +52,7 @@ class BookRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
+        Log.i("BookWidgetService", "onDataSetChanged");
         // Get the uri
         Uri uri = BookContract.BookEntry.CONTENT_URI;
 

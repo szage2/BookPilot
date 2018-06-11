@@ -32,6 +32,8 @@ public class BookWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
+        Log.i("BookWidgetProvider", "book list in OnUpdate is " +bookArrayList);
+
         // If the list holds valid items
         if (bookArrayList != null && !bookArrayList.isEmpty()) {
             // Loop through each App Widget that belongs to this provider
@@ -55,6 +57,7 @@ public class BookWidgetProvider extends AppWidgetProvider {
 
                 // notify app widget manager to perform an update on current app widget
                 appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.book_widget_list);
             }
             super.onUpdate(context, appWidgetManager, appWidgetIds);
         }

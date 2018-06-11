@@ -28,8 +28,11 @@ import com.example.szage.bookpilot.R;
 import com.example.szage.bookpilot.data.BookContract;
 import com.example.szage.bookpilot.data.BookDbHelper;
 import com.example.szage.bookpilot.model.Book;
+import com.example.szage.bookpilot.widget.BookWidgetProvider;
 
 import java.util.ArrayList;
+
+import static com.example.szage.bookpilot.widget.BookWidgetProvider.ACTION_UPDATE;
 
 /**
  *
@@ -405,12 +408,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     if (!isInDatabase) {
                         // Add the book to database
                         insertBook();
+                        broadcastUpdateActionToWidget();
                         // Setup buttons
                         afterAdditionClicked();
                     } else if (mCategory == 1 || mCategory == 2){
                         // If it's already in database and category is 1 / 2
                         // change the category
                         changeCategory(mCategory);
+                        broadcastUpdateActionToWidget();
                     } else {
                         // Otherwise (already in database and category is 3)
                         // setup buttons, make notification and log
@@ -429,6 +434,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             public void onClick(View view) {
                 // Delete selected book
                 deleteBook();
+                broadcastUpdateActionToWidget();
             }
         });
 
@@ -777,5 +783,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         shareDetails.putExtra(Intent.EXTRA_TEXT, text);
         // Start the activity
         getActivity().startActivity(Intent.createChooser(shareDetails, getResources().getText(R.string.read_list)));
+    }
+
+    /**
+     *  Broadcast update action to widget provider
+     */
+    private void broadcastUpdateActionToWidget() {
+        if (mCategory == 1) {
+            Log.i(LOG_TAG, "update widget in insert book");
+            Intent updateWidget = new Intent(getActivity(), BookWidgetProvider.class);
+            updateWidget.setAction(ACTION_UPDATE);
+            getActivity().sendBroadcast(updateWidget);
+        }
     }
 }

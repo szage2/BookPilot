@@ -16,6 +16,9 @@ import android.view.MenuItem;
 
 import com.example.szage.bookpilot.R;
 import com.example.szage.bookpilot.data.BookContract;
+import com.example.szage.bookpilot.widget.BookWidgetProvider;
+
+import static com.example.szage.bookpilot.widget.BookWidgetProvider.ACTION_UPDATE;
 
 public class BookListActivity extends AppCompatActivity implements WishListFragment.OnNewItemSelectedListener,
         DetailFragment.OnItemRemovedFromCategoryListener, UnreadListFragment.OnNewItemSelectedListener2,
@@ -295,6 +298,17 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
             isItemRemoved = true;
             // Method call
             makeDetailFragmentUpdate();
+        }
+        Log.i("BookListActivity", "category is " + mCategory);
+        // If the category equals 1
+        if (category == 1) {
+            // Create an intent to BookWidgetProvider class
+            Intent updateWidget = new Intent(BookListActivity.this, BookWidgetProvider.class);
+            // Set an action on the intent
+            updateWidget.setAction(ACTION_UPDATE);
+            // Broadcast it to the widget
+            sendBroadcast(updateWidget);
+            Log.i("BookListActivity", "updating widget");
         }
     }
 

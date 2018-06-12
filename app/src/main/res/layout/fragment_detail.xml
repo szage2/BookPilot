@@ -12,18 +12,14 @@
 
         <ImageView
             android:id="@+id/detail_book_cover"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="200dp"
+            android:layout_width="114dp"
+            android:layout_height="130dp"
             android:layout_marginStart="8dp"
-            android:layout_marginRight="200dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="16dp"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/place_holder"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="fitStart"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/place_holder" />
 
         <TextView
             android:id="@+id/detail_title"
@@ -49,7 +45,7 @@
             app:layout_constraintBottom_toTopOf="@+id/isbn_nr"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/detail_book_cover"
-            app:layout_constraintTop_toBottomOf="@+id/detail_title"/>
+            app:layout_constraintTop_toBottomOf="@+id/detail_title" />
 
         <TextView
             android:id="@+id/isbn_nr"
@@ -99,7 +95,8 @@
             app:layout_constraintBottom_toTopOf="@+id/delete_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+            app:layout_constraintTop_toBottomOf="@+id/ratingBar"
+            style="@style/ButtonColorTheme"/>
 
         <Button
             android:id="@+id/add_btn"
@@ -111,7 +108,8 @@
             android:text="@string/add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/delete_btn"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/ButtonColorTheme"/>
 
         <Button
             android:id="@+id/delete_btn"
@@ -125,7 +123,8 @@
             android:text="@string/delete_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/add_btn" />
+            app:layout_constraintStart_toEndOf="@+id/add_btn"
+            style="@style/ButtonColorTheme" />
 
         <TextView
             android:id="@+id/rating_text"

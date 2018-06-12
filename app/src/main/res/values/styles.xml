@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ButtonColorTheme">
+        <item name="android:background">@drawable/button_shape</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
 </resources>

@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.szage.bookpilot.R;
@@ -197,6 +198,9 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
             beginTheFragmentTransaction(fragment);
         }
 
+        // Call method that un check all items
+        handleNavigationDrawerItemsUnCheck();
+
         // Set the selected item checked in the menu
         item.setChecked(true);
         // Get the selected item's title and set it as Activity's title
@@ -205,6 +209,28 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
         if (!mIsTwoPanes) {
             // Close the drawer to make whole selected fragment visible
             mDrawer.closeDrawers();
+        }
+    }
+
+    /**
+     * Un check all items of menu and submenu
+     */
+    private void handleNavigationDrawerItemsUnCheck() {
+        // Get the size of the menu (number of items)
+        int size = mNavigationView.getMenu().size();
+        // Loop through the menu
+        for (int i = 0; i < size; i++) {
+            // Un check all items
+            MenuItem menuItem = mNavigationView.getMenu().getItem(i);
+            if (menuItem.hasSubMenu()) {
+                // Get submenu
+                Menu subMenu = menuItem.getSubMenu();
+                // Loop through the submenu
+                for (int j = 0; j < subMenu.size(); j++) {
+                    // Un check all items
+                    subMenu.getItem(j).setChecked(false);
+                }
+            }
         }
     }
 

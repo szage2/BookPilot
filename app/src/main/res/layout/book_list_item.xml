@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:cropToPadding="false"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY"
+            android:contentDescription="@string/book_title" />
 
         <TextView
             android:id="@+id/book_title"

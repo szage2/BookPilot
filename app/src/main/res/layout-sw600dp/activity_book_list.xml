@@ -26,7 +26,8 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:layout_marginStart="@dimen/container_padding"
-        android:layout_marginLeft="@dimen/container_padding">
+        android:layout_marginLeft="@dimen/container_padding"
+        android:baselineAligned="false">
 
         <!-- Container views for fragments -->
 

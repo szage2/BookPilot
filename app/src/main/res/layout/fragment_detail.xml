@@ -15,11 +15,13 @@
             android:layout_width="114dp"
             android:layout_height="130dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="16dp"
             android:scaleType="fitStart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/place_holder" />
+            app:srcCompat="@drawable/place_holder"
+            android:contentDescription="@string/book_title" />
 
         <TextView
             android:id="@+id/detail_title"
@@ -105,11 +107,13 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="16dp"
             android:text="@string/add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/delete_btn"
             app:layout_constraintStart_toStartOf="parent"
-            style="@style/ButtonColorTheme"/>
+            style="@style/ButtonColorTheme" />
 
         <Button
             android:id="@+id/delete_btn"

@@ -86,4 +86,7 @@
     <!-- Widget -->
     <string name="empty_view">No book added yet</string>
 
+    <!-- Images -->
+    <string name="image_content_description">Book cover</string>
+
 </resources>

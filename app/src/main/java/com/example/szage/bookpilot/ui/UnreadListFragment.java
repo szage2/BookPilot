@@ -74,6 +74,9 @@ public class UnreadListFragment extends Fragment implements LoaderManager.Loader
         // Set the adapter on the Grid View
         unreadGridView.setAdapter(mCursorAdapter);
 
+        // Set an empty view on the grid view, informing user how to start with the app
+        unreadGridView.setEmptyView(rootView.findViewById(R.id.empty_view_unread_list));
+
         // Set Item Click Listener on the grid view
         unreadGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

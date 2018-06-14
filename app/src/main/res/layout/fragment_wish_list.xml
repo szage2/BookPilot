@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     tools:context="com.example.szage.bookpilot.ui.WishListFragment">
 
+    <TextView
+        android:id="@+id/empty_view_wish_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wish_list_empty_view_text"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
     <GridView
         android:padding="8dp"
         android:id="@+id/wish_grid_view"

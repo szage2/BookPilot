@@ -72,6 +72,9 @@ public class ReadListFragment extends Fragment implements LoaderManager.LoaderCa
         // Set the adapter on the GridView
         readGridView.setAdapter(mCursorAdapter);
 
+        // Set an empty view on the grid view, informing user how to start with the app
+        readGridView.setEmptyView(rootView.findViewById(R.id.empty_view_read_list));
+
         readGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {

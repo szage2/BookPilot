@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.example.szage.bookpilot.BookCursorAdapter;
 import com.example.szage.bookpilot.R;
@@ -96,6 +97,9 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         mCursorAdapter = new BookCursorAdapter(getActivity(), null);
         // Set the adapter on the Grid View
         wishGridView.setAdapter(mCursorAdapter);
+
+        // Set an empty view on the grid view, informing user how to start with the app
+        wishGridView.setEmptyView(rootView.findViewById(R.id.empty_view_wish_list));
 
         // Set Item Click Listener on the grid view
         wishGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

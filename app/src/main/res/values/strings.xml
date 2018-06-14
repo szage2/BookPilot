@@ -13,6 +13,7 @@
     <string name="try_again">Try again</string>
     <string name="isbn_ok">OK</string>
     <string name="rate">Rate</string>
+    <string name="navigate_to_list">Check Book List</string>
     <!-- Barcode Scanner Information-->
     <string name="barcode_instruction_scan">Scan ISBN number</string>
     <string name="barcode_instruction_ok">Press OK after right code appears.</string>
@@ -51,6 +52,7 @@
     <string name="change_rating">Change rating</string>
     <string name="rating_failed">Rating failed</string>
     <string name="rating_updated">Rating updated</string>
+    <string name="rating_message_text">Rate the book</string>
     <!-- Addition -->
     <string name="book_already_added_toast">You already added this book.</string>
     <string name="book_already_added_log">Book is already in the database</string>
@@ -88,5 +90,7 @@
 
     <!-- Images -->
     <string name="image_content_description">Book cover</string>
+
+
 
 </resources>

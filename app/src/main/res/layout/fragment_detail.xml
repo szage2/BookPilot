@@ -5,157 +5,171 @@
     android:layout_height="match_parent"
     tools:context="com.example.szage.bookpilot.ui.DetailFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/layout_margin">
 
-
-        <ImageView
-            android:id="@+id/detail_book_cover"
-            android:layout_width="114dp"
-            android:layout_height="130dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:scaleType="fitStart"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/place_holder"
-            android:contentDescription="@string/book_title" />
-
-        <TextView
-            android:id="@+id/detail_title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/detail_book_cover"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/padding_between_layouts"
+            android:paddingTop="@dimen/padding_between_layouts">
 
-        <TextView
-            android:id="@+id/detail_author"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/author"
-            app:layout_constraintBottom_toTopOf="@+id/isbn_nr"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/detail_book_cover"
-            app:layout_constraintTop_toBottomOf="@+id/detail_title" />
+            <ImageView
+                android:id="@+id/detail_book_cover"
+                android:layout_width="114dp"
+                android:layout_height="130dp"
+                android:scaleType="fitStart"
+                app:srcCompat="@drawable/place_holder"
+                android:contentDescription="@string/book_title"
+                android:paddingLeft="@dimen/padding_between_views"
+                android:paddingStart="@dimen/padding_between_views" />
 
-        <TextView
-            android:id="@+id/isbn_nr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/isbn"
-            app:layout_constraintBottom_toBottomOf="@+id/detail_book_cover"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/detail_book_cover"
-            app:layout_constraintTop_toBottomOf="@+id/detail_author"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detail_book_cover"/>
+                <TextView
+                    android:id="@+id/detail_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/title"
+                    android:paddingBottom="@dimen/padding_between_views"/>
 
-        <RatingBar
-            android:id="@+id/ratingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rating_text" />
+                <TextView
+                    android:id="@+id/detail_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/author"
+                    android:paddingBottom="@dimen/padding_between_views"/>
 
-        <Button
-            android:id="@+id/rate_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/rate"
-            app:layout_constraintBottom_toTopOf="@+id/delete_btn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ratingBar"
-            style="@style/ButtonColorTheme"/>
+                <TextView
+                    android:id="@+id/isbn_nr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/isbn"
+                    android:paddingBottom="@dimen/padding_between_views"/>
 
-        <Button
-            android:id="@+id/add_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="16dp"
-            android:text="@string/add"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/delete_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            style="@style/ButtonColorTheme" />
+            </LinearLayout>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/delete_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="8dp"
-            android:text="@string/delete_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/add_btn"
-            style="@style/ButtonColorTheme" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/rating_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Rate the book"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/description" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/book_list_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Check Book List"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/description"
+                    android:paddingBottom="@dimen/padding_between_views"/>
+
+                <TextView
+                    android:id="@+id/rating_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/rating_message_text"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="@dimen/padding_between_views"/>
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="@dimen/padding_between_views"/>
+
+                <Button
+                    android:id="@+id/rate_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/rate"
+                    style="@style/ButtonColorTheme"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingBottom="@dimen/padding_between_views" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="bottom">
+
+                    <Button
+                        android:id="@+id/add_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/add"
+                        style="@style/ButtonColorTheme"
+                        android:paddingBottom="@dimen/padding_between_views"/>
+
+                    <Button
+                        android:id="@+id/delete_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginLeft="8dp"
+                        android:text="@string/delete_button"
+                        style="@style/ButtonColorTheme"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/book_list_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/navigate_to_list"
+                    android:visibility="gone"
+                    style="@style/ButtonColorTheme"/>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_detail"

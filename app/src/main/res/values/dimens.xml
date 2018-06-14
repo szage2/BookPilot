@@ -2,4 +2,8 @@
 <resources>
     <dimen name="drawer_padding">300dp</dimen>
     <dimen name="container_padding">300dp</dimen>
+    <dimen name="layout_margin">8dp</dimen>
+    <dimen name="layout_padding">8dp</dimen>
+    <dimen name="padding_between_views">8dp</dimen>
+    <dimen name="padding_between_layouts">16dp</dimen>
 </resources>

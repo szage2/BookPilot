@@ -6,12 +6,15 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.szage.bookpilot.QueryUtils;
@@ -127,8 +130,19 @@ public class StoreFinderActivity extends AppCompatActivity implements GoogleApiC
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
-            // Fetch Stores objects asynchronously
-            new NearbyStoresTask().execute();
+            // Check network info
+            NetworkInfo networkInfo = QueryUtils.getNetworkInfo(getBaseContext());
+            Log.i(LOG_TAG, "network info is " +networkInfo);
+            // If there's no connectivity
+            if (networkInfo == null) {
+                // Inform user about it with a snackbar
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.map),
+                        R.string.snackbar_message, Snackbar.LENGTH_LONG);
+                snackbar.show();
+            } else {
+                // Otherwise fetch Store objects asynchronously
+                new NearbyStoresTask().execute();
+            }
         }
 
         @Override

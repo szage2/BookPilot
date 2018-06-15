@@ -28,7 +28,8 @@
            android:layout_weight="7"
            app:srcCompat="@drawable/ic_search_black_24dp"
            android:scaleType="fitCenter"
-           android:contentDescription="@string/book_title" />
+           android:contentDescription="@string/book_title"
+           style="@style/ButtonColorTheme"/>
 
    </LinearLayout>
 

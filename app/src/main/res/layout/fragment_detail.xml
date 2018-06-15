@@ -164,6 +164,7 @@
                     android:layout_marginStart="8dp"
                     android:text="@string/navigate_to_list"
                     android:visibility="gone"
+                    android:layout_gravity="center_horizontal"
                     style="@style/ButtonColorTheme"/>
 
             </LinearLayout>

@@ -37,6 +37,8 @@ public class SearchActivity extends AppCompatActivity
     private BookAdapter mBookAdapter;
     private LoaderManager loaderManager;
     private NetworkInfo networkInfo;
+    private TextView emptyView;
+    private RecyclerView searchRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class SearchActivity extends AppCompatActivity
         ImageView searchImage = findViewById(R.id.search_btn);
         // Get the Text View that informs about the results
         final TextView resultTextView = findViewById(R.id.search_result);
+        // Get the empty view
+        emptyView = findViewById(R.id.search_list_empty_view);
 
         // Get the intent that launched the activity
         Intent launcherIntent = getIntent();
@@ -169,9 +173,6 @@ public class SearchActivity extends AppCompatActivity
 
             // Restart LoaderManager
             getLoaderManager().restartLoader(BOOK_LOADER_ID, null, SearchActivity.this);
-
-            // Make query variable ready for the next search (reset)
-            mQueryUrl = "";
         }
     }
 
@@ -184,7 +185,7 @@ public class SearchActivity extends AppCompatActivity
         // Category of the list - 0 means Search result(s)
         int category = 0;
         // Get the Search Recycler View
-        RecyclerView searchRecyclerView = findViewById(R.id.search_recycler_view);
+        searchRecyclerView = findViewById(R.id.search_recycler_view);
         // Set the Grid Layout Manager on it with 2 spans
         searchRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         // Call the Book Adapter's constructor
@@ -218,7 +219,17 @@ public class SearchActivity extends AppCompatActivity
         if (books != null && !books.isEmpty()) {
             // Call method that gets views and displays it with adapter
             setUpResultList(books);
+            // Hide empty view, display recycler view
+            emptyView.setVisibility(View.GONE);
+            searchRecyclerView.setVisibility(View.VISIBLE);
+            // If query is not empty, but there's no match
+        } else if (!mQueryUrl.equals("")){
+            // display empty view, hide recycler view
+            emptyView.setVisibility(View.VISIBLE);
+            if (searchRecyclerView != null) searchRecyclerView.setVisibility(View.GONE);
         }
+        // Make query variable ready for the next search (reset)
+        mQueryUrl = "";
     }
 
     /**

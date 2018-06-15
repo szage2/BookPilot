@@ -97,6 +97,7 @@
     <string name="wish_list_empty_view_text">No books found.\nIt is time for a search!\n\nSwipe to open menu.</string>
     <string name="unread_list_empty_view_text">No unread books found.\n\nYou can mark a book unread\nin wish list category at book details.</string>
     <string name="read_list_empty_view_text">No read books found.\n\nYou can mark a book read\nin unread list category at book details.</string>
+    <string name="search_empty_view_text">No match found for query.</string>
 
 
 </resources>

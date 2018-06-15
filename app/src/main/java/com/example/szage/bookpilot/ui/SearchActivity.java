@@ -4,6 +4,7 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.NetworkInfo;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -34,6 +35,8 @@ public class SearchActivity extends AppCompatActivity
     // Constant value for the book loader ID.
     private static final int BOOK_LOADER_ID = 13;
     private BookAdapter mBookAdapter;
+    private LoaderManager loaderManager;
+    private NetworkInfo networkInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,27 +64,84 @@ public class SearchActivity extends AppCompatActivity
             searchField.setText(barcode);
         }
 
-        // make invisible this Text View as default
+        // Get the loader manager
+        loaderManager = getLoaderManager();
+
+        // Make invisible this Text View as default
         resultTextView.setVisibility(View.GONE);
+        // Get the network info by method call
+        checkConnectivity();
+        // Set up the layout according to network info
+        setUpViewAndLoader(resultTextView);
+
         // Set a click listener on the search image
         searchImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Call method that handel onClick
               searchGetPressed(resultTextView, searchField);
-              searchField.setText(null);
+
+                // Check network connection
+                checkConnectivity();
+
+                // In case there's no connectivity
+                if (networkInfo == null) {
+                    // Inform user about it, set text on the text view
+                    resultTextView.setText(R.string.connectivity_error);
+                    // Create a Snack bar that notifies the user
+                    Snackbar snackbar = Snackbar.make(findViewById(R.id.search_linear_layout),
+                            R.string.snackbar_message, Snackbar.LENGTH_LONG)
+                            // Set retry action on it
+                            .setAction("Retry", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    // That starts loader
+                                    startLoader();
+                                    // Set up the layout according to network info
+                                    setUpViewAndLoader(resultTextView);
+                                    // Make visible Text View
+                                    resultTextView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                    snackbar.show();
+                } setUpViewAndLoader(resultTextView);
+                // Make visible Text View
+                resultTextView.setVisibility(View.VISIBLE);
             }
         });
+    }
 
-        // Get the network info by method call
-        NetworkInfo networkInfo = QueryUtils.getNetworkInfo(this);
-
-        // If there's connection, get the loader
+    /**
+     * Set visibility of text view and starts loader if needed
+     */
+    private void setUpViewAndLoader(TextView result) {
+        // If there's connection
         if (networkInfo != null && networkInfo.isConnected()) {
-            LoaderManager loaderManager = getLoaderManager();
             // Initialize loader
-            loaderManager.initLoader(BOOK_LOADER_ID, null, this);
-        } else resultTextView.setText(R.string.connectivity_error);
+            startLoader();
+            result.setText(R.string.search_result);
+            // Otherwise set text on that view
+        } else {
+            result.setText(R.string.connectivity_error);
+            // Make visible Text View
+            result.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Make the loader work
+     */
+    private void startLoader() {
+        // Initialize loader
+        loaderManager.initLoader(BOOK_LOADER_ID, null, this);
+    }
+
+    /**
+     * Check the network info
+     */
+    private void checkConnectivity() {
+        // Get the network info by method call
+        networkInfo = QueryUtils.getNetworkInfo(this);
     }
 
     /**

@@ -35,6 +35,7 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
     private long firstItemsId;
     private boolean isItemRemoved;
     private Bundle detailBundle;
+    private int selectedMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +130,12 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
      * @param item that is being selected in the drawer menu
      */
     private void selectDrawerItem(MenuItem item) {
+
+        // Get the selected item's id
+        selectedMenuItem = item.getItemId();
+
+        // select the previously selected item based on this id
+        item = mNavigationView.getMenu().findItem(selectedMenuItem);
 
         boolean isFragment;
         Fragment fragment = null;
@@ -355,5 +362,27 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
                     getSupportFragmentManager().findFragmentById(R.id.detail_fragment);
             // And call method that updates it
         } mDetailFragment.updateDetailFragment(detailBundle);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("menuItem", selectedMenuItem);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore selected menu item
+        selectedMenuItem = savedInstanceState.getInt("menuItem");
+        // If the selected item is not 0
+        if (selectedMenuItem != 0) {
+            // Find it in the menu
+            MenuItem drawerItem = mNavigationView.getMenu().getItem(0).getSubMenu().findItem(selectedMenuItem);
+            // Handle the items' state (un check)
+            handleNavigationDrawerItemsUnCheck();
+            // call method and pass previously selected item as argument
+            selectDrawerItem(drawerItem);
+        }
     }
 }

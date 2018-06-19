@@ -32,8 +32,6 @@ public class BookWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
-        Log.i("BookWidgetProvider", "book list in OnUpdate is " +bookArrayList);
-
         // If the list holds valid items
         if (bookArrayList != null && !bookArrayList.isEmpty()) {
             // Loop through each App Widget that belongs to this provider
@@ -51,7 +49,7 @@ public class BookWidgetProvider extends AppWidgetProvider {
                 setRemoteAdapter(context, remoteViews, intent);
 
                 // Set label of the widget
-                remoteViews.setTextViewText(R.id.widget_label, "My wish list");
+                remoteViews.setTextViewText(R.id.widget_label, String.valueOf(R.string.widget_label));
                 // Otherwise display text as empty view
                 remoteViews.setEmptyView(R.id.book_widget_list, R.id.widget_list_empty);
 
@@ -83,9 +81,7 @@ public class BookWidgetProvider extends AppWidgetProvider {
             // In case that extras are not null
             if (bundle != null) {
                 // Get the list of books
-                bookArrayList = bundle.getParcelableArrayList("bookList");
-
-                Log.i("BookWidgetProvider", "book list in onReceive is " +bookArrayList);
+                bookArrayList = bundle.getParcelableArrayList(String.valueOf(R.string.book_list));
             }
 
             appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);

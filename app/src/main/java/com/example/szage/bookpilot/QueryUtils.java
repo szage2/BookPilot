@@ -60,6 +60,12 @@ public class QueryUtils {
     private static final String LONGITUDE = "lng";
     private static final String ICON = "icon";
 
+    private static final String RESULTS = "results";
+    private static final String STATUS = "status";
+    private static final String OK = "OK";
+    private static final String ZERO_RESULTS = "ZERO_RESULTS";
+
+
 
     public QueryUtils() {
         super();
@@ -88,10 +94,10 @@ public class QueryUtils {
             if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
-            } else Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+            } else Log.e(LOG_TAG, String.valueOf(R.string.error_response_code) + urlConnection.getResponseCode());
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the book JSON results.", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.json_error), e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -135,7 +141,7 @@ public class QueryUtils {
         try {
             url = new URL(stringUrl);
         } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Problem building the URL ", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.url_building_error), e);
         }
         return url;
     }
@@ -157,14 +163,14 @@ public class QueryUtils {
         // Create URL object
         URL url = createUrl(requestUrl);
 
-        Log.i(LOG_TAG, "Request Url is " + requestUrl);
+        Log.i(LOG_TAG, String.valueOf(R.string.request_url) + requestUrl);
 
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.http_request_error), e);
         }
 
         // Extract relevant fields from the JSON Response and create a list {@link book}s
@@ -256,14 +262,14 @@ public class QueryUtils {
                     book  = new Book(title, authors, isbn, imageUrl, description);
                     // Add it to list
                     books.add(book);
-                    Log.e(LOG_TAG, "Identifier does not exist", ex);
+                    Log.e(LOG_TAG, String.valueOf(R.string.identifier_error), ex);
                 }
             }
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,
             // catch the exception here, so the app doesn't crash. Print a log message
             // with with the message from the exception.
-            Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.parsing_error), e);
         }
         // Return the list of books
         return books;
@@ -327,7 +333,7 @@ public class QueryUtils {
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+            Log.e(LOG_TAG, String.valueOf(R.string.http_request_error), e);
         }
 
         // Return the list of Stores after extracted relevant fields
@@ -356,9 +362,9 @@ public class QueryUtils {
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(response);
             // Extract the JSONArray represents a list of stores/ places
-            JSONArray jsonArray = baseJsonResponse.getJSONArray("results");
+            JSONArray jsonArray = baseJsonResponse.getJSONArray(RESULTS);
 
-            if (baseJsonResponse.getString("status").equalsIgnoreCase("OK")) {
+            if (baseJsonResponse.getString(STATUS).equalsIgnoreCase(OK)) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject place = jsonArray.getJSONObject(i);
 
@@ -386,13 +392,13 @@ public class QueryUtils {
                     // add it to the list
                     stores.add(store);
                 }
-            } else if (baseJsonResponse.getString("status").equalsIgnoreCase("ZERO_RESULTS")) {
-                Log.i(LOG_TAG, "No bookstore found in 5KM radius!!!");
+            } else if (baseJsonResponse.getString(STATUS).equalsIgnoreCase(ZERO_RESULTS)) {
+                Log.i(LOG_TAG, String.valueOf(R.string.store_finder_error));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.i(LOG_TAG, "stores after parsing is " + stores);
+        Log.i(LOG_TAG, String.valueOf(R.string.store_log) + stores);
         return stores;
     }
 }

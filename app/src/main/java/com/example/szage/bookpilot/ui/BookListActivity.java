@@ -272,7 +272,7 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
         // put category and position of selected item in the bundle
         detailBundle.putInt(String.valueOf(R.string.category), mCategory);
         detailBundle.putInt(String.valueOf(R.string.position), mPosition);
-        detailBundle.putLong("itemId", firstItemsId);
+        detailBundle.putLong(String.valueOf(R.string.item_id), firstItemsId);
         // if uri is null
         if (mStringBookUri == null) {
             // Create a default uri with id of 0
@@ -332,7 +332,6 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
             // Method call
             makeDetailFragmentUpdate();
         }
-        Log.i("BookListActivity", "category is " + mCategory);
         // If the category equals 1
         if (category == 1) {
             // Create an intent to BookWidgetProvider class
@@ -341,7 +340,6 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
             updateWidget.setAction(ACTION_UPDATE);
             // Broadcast it to the widget
             sendBroadcast(updateWidget);
-            Log.i("BookListActivity", "updating widget");
         }
     }
 
@@ -367,14 +365,14 @@ public class BookListActivity extends AppCompatActivity implements WishListFragm
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("menuItem", selectedMenuItem);
+        outState.putInt(String.valueOf(R.string.menu_item), selectedMenuItem);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore selected menu item
-        selectedMenuItem = savedInstanceState.getInt("menuItem");
+        selectedMenuItem = savedInstanceState.getInt(String.valueOf(R.string.menu_item));
         // If the selected item is not 0
         if (selectedMenuItem != 0) {
             // Find it in the menu

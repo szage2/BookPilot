@@ -222,7 +222,6 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
                 String book = authors + ": " + title + "\n";
                 // Add the book string to books string
                 books = books + book;
-                Log.i("WishListFragment", "books is " + books);
                 // Move the cursor to next book
                 cursor.moveToNext();
 
@@ -280,7 +279,7 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
         // Set the type
         shareIntent.setType("text/plain");
         // put subject and body as extra data
-        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My desired books");
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, String.valueOf(R.string.desired_books));
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
         // Start the activity
         getActivity().startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.wish_list)));
@@ -290,13 +289,12 @@ public class WishListFragment extends Fragment implements LoaderManager.LoaderCa
      * Updates collection widget
      */
     public void updateWidgetWithBookList() {
-        Log.i("WhishListFragment", "updateWidgetWithBookList");
         // Create an intent
         Intent widgetIntent = new Intent(getActivity(), BookWidgetProvider.class);
         // Set update as action
         widgetIntent.setAction(ACTION_UPDATE);
         // add array list as extra data
-        widgetIntent.putExtra("bookList", bookArrayList);
+        widgetIntent.putExtra(String.valueOf(R.string.book_list), bookArrayList);
         // Broadcast it to the widget
         getActivity().sendBroadcast(widgetIntent);
     }

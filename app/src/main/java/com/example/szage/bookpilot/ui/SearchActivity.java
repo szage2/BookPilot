@@ -63,7 +63,6 @@ public class SearchActivity extends AppCompatActivity
         if (extra != null) {
             // Get the barcode
             barcode = extra.getString(String.valueOf(R.string.barcode));
-            Log.i("SearchActivity", "barcode is " + barcode);
             // Set the barcode on the edit text as query
             searchField.setText(barcode);
         }

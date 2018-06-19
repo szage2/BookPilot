@@ -164,10 +164,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     // Get the rating and convert it to string
                     String rateValue = String.valueOf((ratingBar.getRating()));
                     // Add rating value to shareable string
-                    sharedText = sharedText + ". "+ "Rated: " + rateValue +"/5";
+                    sharedText = sharedText + String.valueOf(R.string.rated) + rateValue + String.valueOf(R.string.rate_value);
                 }
                 // Log the shareable text
-                Log.i(LOG_TAG, "share value is " + sharedText);
+                Log.i(LOG_TAG, String.valueOf(R.string.share_value) + sharedText);
                 // Call method that shares book
                 shareReadBook(sharedText);
             }
@@ -232,7 +232,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // If the category is 0 (Search Activity)
             // Get the list of books
             mBooks = extra.getParcelableArrayList(String.valueOf(R.string.books));
-            Log.i(LOG_TAG, "book list is " + mBooks);
             // Finally get the position of the book
             mPosition = extra.getInt(String.valueOf(R.string.position));
             // Otherwise make the loader work
@@ -296,8 +295,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 // If it's not rated yet
             } else {
                 // Set text on text view and button accordingly
-                bookRating.setText("Rate this book");
-                rateButton.setText("Rate");
+                bookRating.setText(R.string.rate_this_book);
+                rateButton.setText(R.string.rate);
             }
             // Set that data on rating bar
             ratingBar.setRating(mRating);
@@ -704,7 +703,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // If current title of activity is null
         if (getActivity().getTitle() == null) {
             // Leave activityTitle variable's value as it is, log it
-            Log.i(LOG_TAG, "title in updateDetailFragment is " + activityTitle);
+            Log.i(LOG_TAG, String.valueOf(R.string.title_info_log) + activityTitle);
             // Otherwise, change it to current title
         } else activityTitle = String.valueOf(getActivity().getTitle());
 
@@ -779,7 +778,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Set the type
         shareDetails.setType("text/plain");
         // put subject and body as extra data
-        shareDetails.putExtra(android.content.Intent.EXTRA_SUBJECT, "I read this book");
+        shareDetails.putExtra(android.content.Intent.EXTRA_SUBJECT, String.valueOf(R.string.read_this_book));
         shareDetails.putExtra(Intent.EXTRA_TEXT, text);
         // Start the activity
         getActivity().startActivity(Intent.createChooser(shareDetails, getResources().getText(R.string.read_list)));
@@ -790,7 +789,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      */
     private void broadcastUpdateActionToWidget() {
         if (mCategory == 1) {
-            Log.i(LOG_TAG, "update widget in insert book");
             Intent updateWidget = new Intent(getActivity(), BookWidgetProvider.class);
             updateWidget.setAction(ACTION_UPDATE);
             getActivity().sendBroadcast(updateWidget);

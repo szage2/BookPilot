@@ -47,12 +47,20 @@
     <!-- Updating -->
     <string name="update_failed">Update failed</string>
     <string name="book_updated">Book updated</string>
+    <string name="title_info_log">title in updateDetailFragment is </string>
     <!-- Rating -->
     <string name="already_rated">You have rated this book</string>
     <string name="change_rating">Change rating</string>
     <string name="rating_failed">Rating failed</string>
     <string name="rating_updated">Rating updated</string>
     <string name="rating_message_text">Rate the book</string>
+    <string name="rated">. Rated:</string>
+    <string name="rate_value">/5</string>
+    <string name="rate_this_book">Rate this book</string>
+    <!-- Sharing -->
+    <string name="share_value">share value is</string>
+    <string name="read_this_book">I read this book</string>
+    <string name="desired_books">My desired books</string>
     <!-- Addition -->
     <string name="book_already_added_toast">You already added this book.</string>
     <string name="book_already_added_log">Book is already in the database</string>
@@ -73,7 +81,9 @@
     <string name="id">id</string>
     <string name="category">category</string>
     <string name="barcode">barcode</string>
-
+    <string name="book_list">bookList</string>
+    <string name="item_id">itemId</string>
+    <string name="menu_item">menuItem</string>
 
     <!-- Fragment labels -->
     <string name="wish_list">Wish list</string>
@@ -86,12 +96,20 @@
     <string name="connectivity_error_check">Please check your connectivity</string>
     <string name="snackbar_message">Device lost connectivity</string>
     <string name="current_uri">book uri</string>
+    <string name="json_error">Problem retrieving the book JSON results.</string>
+    <string name="error_response_code">Error response code:</string>
+    <string name="url_building_error">Problem building the URL </string>
+    <string name="request_url">Request Url is </string>
+    <string name="http_request_error">Problem making the HTTP request.</string>
+    <string name="identifier_error">Identifier does not exist</string>
+    <string name="parsing_error">Problem parsing the book JSON results</string>
+    <string name="store_finder_error">No bookstore found in 5KM radius!!!</string>
+    <string name="store_log">stores after parsing is</string>
+    <string name="places_api_error_code">Google Places API connection failed with error code: </string>
 
     <!-- Widget -->
     <string name="empty_view">No book added yet</string>
-
-    <!-- Images -->
-    <string name="image_content_description">Book cover</string>
+    <string name="widget_label">My wish list</string>
 
     <!-- Empty View -->
     <string name="wish_list_empty_view_text">No books found.\nIt is time for a search!\n\nSwipe to open menu.</string>
@@ -100,6 +118,7 @@
     <string name="search_empty_view_text">No match found for query.</string>
 
     <!-- Content Descriptions -->
+    <string name="image_content_description">Book cover</string>
     <string name="surface_desc">Captures frames from camera</string>
     <string name="ok_btn_desc">Button that should be pressed after right barcode appears</string>
     <string name="again_btn_desc">Button that should be pressed when barcode not read properly</string>
@@ -111,5 +130,16 @@
     <string name="fab_detail_btn_desc">Button enables to share details of selected book</string>
     <string name="fab_list_btn_desc">Button enables to share a list of desired books</string>
 
+    <!-- Database Information -->
+    <string name="unknown_uri">Unknown uri </string>
+    <string name="not_supported_uri">Not supported uri</string>
+    <string name="title_requiremnt">Book requires a title</string>
+    <string name="author_requiremnt">Book requires at least one author</string>
+    <string name="description_requiremnt">Book requires a description</string>
+    <string name="category_requiremnt">Book requires valid category</string>
+    <string name="rating_requiremnt">Book requires valid rating</string>
+    <string name="id_requiremnt">Valid id is required</string>
+    <string name="unsupported_operation">Unsupported operation</string>
+    <string name="unsupported_update">Update is not supported for</string>
 
 </resources>

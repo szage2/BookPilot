@@ -121,7 +121,6 @@ public class StoreFinderActivity extends AppCompatActivity implements GoogleApiC
         @Override
         public void onLocationChanged(final Location location) {
             // Get the latitude and longitude from location
-            Log.i(LOG_TAG, "location is " + location);
             mLatitude = location.getLatitude();
             mLongitude = location.getLongitude();
 
@@ -132,7 +131,6 @@ public class StoreFinderActivity extends AppCompatActivity implements GoogleApiC
 
             // Check network info
             NetworkInfo networkInfo = QueryUtils.getNetworkInfo(getBaseContext());
-            Log.i(LOG_TAG, "network info is " +networkInfo);
             // If there's no connectivity
             if (networkInfo == null) {
                 // Inform user about it with a snackbar
@@ -169,12 +167,12 @@ public class StoreFinderActivity extends AppCompatActivity implements GoogleApiC
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // Log the error
-        Log.e(LOG_TAG, "Google Places API connection failed with error code: "
+        Log.e(LOG_TAG, String.valueOf(R.string.places_api_error_code)
                 + connectionResult.getErrorCode());
 
         // Inform user about the problem
         Toast.makeText(this,
-                "Google Places API connection failed with error code:" +
+                String.valueOf(R.string.places_api_error_code) +
                         connectionResult.getErrorCode(),
                 Toast.LENGTH_LONG).show();
     }
@@ -205,8 +203,6 @@ public class StoreFinderActivity extends AppCompatActivity implements GoogleApiC
                 double longitude = stores.get(i).getLongitude();
                 String placeName = stores.get(i).getPlaceName();
                 String vicinity = stores.get(i).getVicinity();
-
-                Log.i(LOG_TAG, "strore name is " + placeName);
 
                 // Mark each on the map
                 MarkerOptions markerOptions = new MarkerOptions();

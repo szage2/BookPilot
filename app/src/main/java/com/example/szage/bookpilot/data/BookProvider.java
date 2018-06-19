@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.szage.bookpilot.R;
+
 
 /**
  * Serves content provider for the Book Pilot app data.
@@ -104,7 +106,7 @@ public class BookProvider extends ContentProvider {
                         sortOrder);
                 break;
             default:
-                throw new  IllegalArgumentException("Unknown Uri " + uri);
+                throw new  IllegalArgumentException(String.valueOf(R.string.unknown_uri) + uri);
         }
         // In case of data change, update the cursor
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -132,7 +134,7 @@ public class BookProvider extends ContentProvider {
                 // A single book in the database
                 return BookContract.BookEntry.CONTENT_ITEM_TYPE;
             default:
-                throw new IllegalArgumentException(("Unknown uri") + uri);
+                throw new IllegalArgumentException((String.valueOf(R.string.unknown_uri)) + uri);
         }
     }
 
@@ -151,7 +153,7 @@ public class BookProvider extends ContentProvider {
             case ALL_BOOKS :
                 return insertBook(uri, contentValues);
             default:
-                throw new IllegalArgumentException("Not supported uri " + uri);
+                throw new IllegalArgumentException(String.valueOf(R.string.not_supported_uri) + uri);
         }
     }
 
@@ -170,27 +172,27 @@ public class BookProvider extends ContentProvider {
 
         String title = values.getAsString(BookContract.BookEntry.COLUMN_TITLE);
         if (title == null) {
-            throw new  IllegalArgumentException ("Book requires a title");
+            throw new  IllegalArgumentException (String.valueOf(R.string.title_requiremnt));
         }
 
         String authors = values.getAsString(BookContract.BookEntry.COLUMN_AUTHORS);
         if (authors == null) {
-            throw new  IllegalArgumentException ("Book requires at least one author");
+            throw new  IllegalArgumentException (String.valueOf(R.string.author_requiremnt));
         }
 
         String description = values.getAsString(BookContract.BookEntry.COLUMN_DESCRIPTION);
         if (description == null) {
-            throw new  IllegalArgumentException ("Book requires a description");
+            throw new  IllegalArgumentException (String.valueOf(R.string.description_requiremnt));
         }
 
         Integer category = values.getAsInteger(BookContract.BookEntry.COLUMN_CATEGORY_ID);
         if (category == null || !BookContract.BookEntry.isValidCategory(category)) {
-            throw new  IllegalArgumentException ("Book requires valid category");
+            throw new  IllegalArgumentException (String.valueOf(R.string.category_requiremnt));
         }
 
         Integer rating = values.getAsInteger(BookContract.BookEntry.COLUMN_RATING);
         if (rating == null || !BookContract.BookEntry.isValidRating(rating)) {
-            throw new  IllegalArgumentException ("Book requires valid rating");
+            throw new  IllegalArgumentException (String.valueOf(R.string.rating_requiremnt));
         }
 
         // Get writable database
@@ -198,7 +200,7 @@ public class BookProvider extends ContentProvider {
 
         long id = database.insert(BookContract.BookEntry.TABLE_NAME, null, values);
         if (id == -1) {
-            throw new IllegalArgumentException("Valid id is required");
+            throw new IllegalArgumentException(String.valueOf(R.string.id_requiremnt));
         }
 
         // Notify the Content Resolver of the inserted data
@@ -244,7 +246,7 @@ public class BookProvider extends ContentProvider {
                 break;
 
             default:
-                throw new IllegalArgumentException("Unsupported operation" + uri);
+                throw new IllegalArgumentException(String.valueOf(R.string.unsupported_operation) + uri);
         }
 
         // Notify the Content Resolver of the deleted data
@@ -279,7 +281,7 @@ public class BookProvider extends ContentProvider {
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
                 return updateBook(uri, contentValues, selection, selectionArgs);
             default:
-                throw new IllegalArgumentException("Update is not supported for " + uri);
+                throw new IllegalArgumentException(String.valueOf(R.string.unsupported_update) + uri);
         }
     }
 
@@ -306,14 +308,14 @@ public class BookProvider extends ContentProvider {
         if (contentValues.containsKey(BookContract.BookEntry.COLUMN_CATEGORY_ID)) {
             Integer category = contentValues.getAsInteger(BookContract.BookEntry.COLUMN_CATEGORY_ID);
             if (category == null || !BookContract.BookEntry.isValidCategory(category)) {
-                throw new IllegalArgumentException("Book requires valid category");
+                throw new IllegalArgumentException(String.valueOf(R.string.category_requiremnt));
             }
         }
 
         if (contentValues.containsKey(BookContract.BookEntry.COLUMN_RATING)) {
             Integer rating = contentValues.getAsInteger(BookContract.BookEntry.COLUMN_RATING);
             if (rating == null || !BookContract.BookEntry.isValidRating(rating)) {
-                throw new IllegalArgumentException("Book requires valid rating");
+                throw new IllegalArgumentException(String.valueOf(R.string.rating_requiremnt));
             }
         }
 

@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         app:srcCompat="@drawable/share"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"
+        android:contentDescription="@string/fab_list_btn_desc"/>
 
 </FrameLayout>

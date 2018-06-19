@@ -99,5 +99,17 @@
     <string name="read_list_empty_view_text">No read books found.\n\nYou can mark a book read\nin unread list category at book details.</string>
     <string name="search_empty_view_text">No match found for query.</string>
 
+    <!-- Content Descriptions -->
+    <string name="surface_desc">Captures frames from camera</string>
+    <string name="ok_btn_desc">Button that should be pressed after right barcode appears</string>
+    <string name="again_btn_desc">Button that should be pressed when barcode not read properly</string>
+    <string name="rating_bar_desc">Rating bar shows the rate value in graphical form</string>
+    <string name="rate_btn_desc">Button enables to rate a book or change existing rating</string>
+    <string name="add_btn_desc">Button enables to add selected book to a list in the context</string>
+    <string name="delete_btn_desc">Button enables to delete a book of a list in the context</string>
+    <string name="list_btn_desc">Button enables to navigate to the list where a book has been added to</string>
+    <string name="fab_detail_btn_desc">Button enables to share details of selected book</string>
+    <string name="fab_list_btn_desc">Button enables to share a list of desired books</string>
+
 
 </resources>

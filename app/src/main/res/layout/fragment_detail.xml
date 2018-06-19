@@ -105,6 +105,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/rating_bar_desc"
                     android:paddingBottom="@dimen/padding_between_views"/>
 
                 <Button
@@ -118,7 +119,8 @@
                     android:text="@string/rate"
                     style="@style/ButtonColorTheme"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="@dimen/padding_between_views" />
+                    android:paddingBottom="@dimen/padding_between_views"
+                    android:contentDescription="@string/rate_btn_desc"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -138,7 +140,8 @@
                         android:layout_marginLeft="16dp"
                         android:text="@string/add"
                         style="@style/ButtonColorTheme"
-                        android:paddingBottom="@dimen/padding_between_views"/>
+                        android:paddingBottom="@dimen/padding_between_views"
+                        android:contentDescription="@string/add_btn_desc"/>
 
                     <Button
                         android:id="@+id/delete_btn"
@@ -151,7 +154,8 @@
                         android:layout_marginRight="16dp"
                         android:layout_marginLeft="8dp"
                         android:text="@string/delete_button"
-                        style="@style/ButtonColorTheme"/>
+                        style="@style/ButtonColorTheme"
+                        android:contentDescription="@string/delete_btn_desc"/>
 
                 </LinearLayout>
 
@@ -165,7 +169,8 @@
                     android:text="@string/navigate_to_list"
                     android:visibility="gone"
                     android:layout_gravity="center_horizontal"
-                    style="@style/ButtonColorTheme"/>
+                    style="@style/ButtonColorTheme"
+                    android:contentDescription="@string/list_btn_desc"/>
 
             </LinearLayout>
         </ScrollView>
@@ -178,6 +183,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         app:srcCompat="@drawable/share"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"
+        android:contentDescription="@string/fab_detail_btn_desc"/>
 
 </FrameLayout>

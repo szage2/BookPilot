@@ -15,7 +15,8 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:contentDescription="@string/surface_desc"/>
 
     <Button
         android:id="@+id/ok_button"
@@ -30,6 +31,7 @@
         app:layout_constraintEnd_toStartOf="@+id/again_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:contentDescription="@string/ok_btn_desc"
         style="@style/ButtonColorTheme"/>
 
     <Button
@@ -47,6 +49,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ok_button"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:contentDescription="@string/again_btn_desc"
         style="@style/ButtonColorTheme"/>
 
     <TextView

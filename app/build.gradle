@@ -1,6 +1,24 @@
 apply plugin: 'com.android.application'
 
+// Create a variable keystorePropertiesFile, and initialize it
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+// Initialize a new Properties() object keystoreProperties
+def keystoreProperties = new Properties()
+
+// Load keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+
 android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file('keystore.jks')
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.example.szage.bookpilot"
@@ -14,6 +32,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     defaultConfig {
@@ -25,7 +44,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
@@ -39,5 +58,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-
 }

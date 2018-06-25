@@ -122,10 +122,7 @@ public class BookContract {
          * @return is the boolean that identifies the validity of the variable
          */
         public static boolean isValidCategory(int category) {
-            if (category == WISH_LIST || category == UNREAD_LIST || category == READ_LIST) {
-                return true;
-            }
-            return false;
+            return category == WISH_LIST || category == UNREAD_LIST || category == READ_LIST;
         }
 
         /**
@@ -135,12 +132,9 @@ public class BookContract {
          * @return is the boolean that identifies the validity of the variable
          */
         public static boolean isValidRating(int rating) {
-            if (rating == DEFAULT_STAR || rating == ONE_STAR || rating == TWO_STARS
-                    || rating == THREE_STARS || rating == FOUR_STARS || rating == FIVE_STARS ) {
-                return true;
-            }
+            return rating == DEFAULT_STAR || rating == ONE_STAR || rating == TWO_STARS
+                    || rating == THREE_STARS || rating == FOUR_STARS || rating == FIVE_STARS;
 
-            return false;
         }
     }
 }

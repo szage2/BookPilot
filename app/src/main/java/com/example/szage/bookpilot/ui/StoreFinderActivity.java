@@ -125,7 +125,7 @@ public class StoreFinderActivity extends AppCompatActivity implements GoogleApiC
             mLongitude = location.getLongitude();
 
             LatLng latLng = new LatLng(mLatitude, mLongitude);
-            mMap.addMarker(new MarkerOptions().position(latLng).title("My Location"));
+            mMap.addMarker(new MarkerOptions().position(latLng).title(String.valueOf(R.string.current_location)));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 

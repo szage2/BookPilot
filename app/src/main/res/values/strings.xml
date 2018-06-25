@@ -106,6 +106,8 @@
     <string name="store_finder_error">No bookstore found in 5KM radius!!!</string>
     <string name="store_log">stores after parsing is</string>
     <string name="places_api_error_code">Google Places API connection failed with error code: </string>
+    <string name="retry_snakbar_action">Retry</string>
+    <string name="current_location">My Location</string>
 
     <!-- Widget -->
     <string name="empty_view">No book added yet</string>

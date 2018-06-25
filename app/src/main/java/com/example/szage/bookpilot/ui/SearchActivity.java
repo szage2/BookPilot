@@ -95,7 +95,7 @@ public class SearchActivity extends AppCompatActivity
                     Snackbar snackbar = Snackbar.make(findViewById(R.id.search_linear_layout),
                             R.string.snackbar_message, Snackbar.LENGTH_LONG)
                             // Set retry action on it
-                            .setAction("Retry", new View.OnClickListener() {
+                            .setAction(R.string.retry_snakbar_action, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     // That starts loader

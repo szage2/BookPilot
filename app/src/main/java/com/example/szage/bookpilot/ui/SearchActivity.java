@@ -231,13 +231,8 @@ public class SearchActivity extends AppCompatActivity
         mQueryUrl = "";
     }
 
-    /**
-     * Update the adapter
-     *
-     * @param loader  holds the data
-     */
     @Override
     public void onLoaderReset(Loader<ArrayList<Book>> loader) {
-        mBookAdapter.notifyDataSetChanged();
+
     }
 }

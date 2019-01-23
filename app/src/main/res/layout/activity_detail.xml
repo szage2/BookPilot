@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.szage.bookpilot.ui.DetailActivity">
+    tools:context="com.gerdaszabo.szage.bookpilot.ui.DetailActivity">
 
     <!-- Container view for fragment -->
     <FrameLayout

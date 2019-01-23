@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/drawer_layout"
-    tools:context="com.example.szage.bookpilot.ui.BookListActivity">
+    tools:context="com.gerdaszabo.szage.bookpilot.ui.BookListActivity">
 
     <!-- Container view for fragment -->
     <FrameLayout

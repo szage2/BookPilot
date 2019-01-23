@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.szage.bookpilot">
+    package="com.gerdaszabo.szage.bookpilot">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,25 +10,25 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/book_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/book_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.BookListActivity">
+        <activity android:name="com.gerdaszabo.szage.bookpilot.ui.BookListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.DetailActivity" />
-        <activity android:name=".ui.SearchActivity" />
-        <activity android:name=".ui.BarcodeActivity" />
-        <activity android:name=".ui.StoreFinderActivity" />
+        <activity android:name="com.gerdaszabo.szage.bookpilot.ui.DetailActivity" />
+        <activity android:name="com.gerdaszabo.szage.bookpilot.ui.SearchActivity" />
+        <activity android:name="com.gerdaszabo.szage.bookpilot.ui.BarcodeActivity" />
+        <activity android:name="com.gerdaszabo.szage.bookpilot.ui.StoreFinderActivity" />
         <provider
-            android:authorities="com.example.szage.bookpilot"
-            android:name=".data.BookProvider"
+            android:authorities="com.gerdaszabo.szage.bookpilot"
+            android:name="com.gerdaszabo.szage.bookpilot.data.BookProvider"
             android:exported="true"
             android:grantUriPermissions="true"/>
 
@@ -39,9 +39,9 @@
         <!-- TODO: Replace the value field with your own API key-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value=""/>
+            android:value="AIzaSyDMKPmKpihAouypyqx8AEDBeBMV7VZZgQM"/>
         
-        <receiver android:name=".widget.BookWidgetProvider"
+        <receiver android:name="com.gerdaszabo.szage.bookpilot.widget.BookWidgetProvider"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -50,7 +50,7 @@
                 android:resource="@xml/widget_info_book" />
         </receiver>
         
-        <service android:name=".widget.BookWidgetService"
+        <service android:name="com.gerdaszabo.szage.bookpilot.widget.BookWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
